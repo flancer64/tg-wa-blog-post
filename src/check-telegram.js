@@ -1,4 +1,8 @@
+#!/usr/bin/env node
 import { Bot } from "grammy";
+import { config } from "dotenv";
+
+config();
 
 const token = process.env.BOT_TOKEN;
 if (!token) {
