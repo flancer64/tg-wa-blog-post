@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "tg:check": "node src/check-telegram.js",
+    "tg:post": "node bin/post.js",
     "test": "echo \"No tests yet\""
   },
   "dependencies": {
