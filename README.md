@@ -1,2 +1,21 @@
 # tg-wa-blog-post
-Web service for publishing blog posts to a Telegram channel via bot.
+
+Веб‑сервис для публикации записей блога в телеграм‑канал через бота.
+
+## Подготовка
+
+1. Установите зависимости:
+   ```bash
+   npm install
+   ```
+2. Создайте файл `.env` на основе `.env.example` и задайте `BOT_TOKEN`.
+
+## Проверка интеграции с Telegram
+
+Выполните команду:
+
+```bash
+npm run tg:check
+```
+
+Команда выводит информацию о боте при успешном подключении.
