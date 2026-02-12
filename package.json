@@ -1,6 +1,6 @@
 {
-  "name": "tg-wa-blog-post",
-  "version": "1.0.0",
+  "name": "@flancer64/tg-wa-blog-post",
+  "version": "0.1.0",
   "description": "Web service for publishing blog posts to a Telegram channel via bot.",
   "type": "module",
   "scripts": {
@@ -9,7 +9,6 @@
     "test": "echo \"No tests yet\""
   },
   "dependencies": {
-    "dotenv": "^17.2.1",
     "grammy": "^1.20.4"
   }
 }
