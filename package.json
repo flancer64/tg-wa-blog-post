@@ -4,11 +4,11 @@
   "description": "Web service for publishing blog posts to a Telegram channel via bot.",
   "type": "module",
   "scripts": {
-    "tg:check": "node src/check-telegram.js",
-    "tg:post": "node bin/post.js",
+    "start": "node bin/app.mjs",
     "test": "echo \"No tests yet\""
   },
   "dependencies": {
+    "@teqfw/di": "^1.2.0",
     "grammy": "^1.20.4"
   }
 }
