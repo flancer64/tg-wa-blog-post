@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "node ./bin/bootstrap.mjs",
-    "test": "node --test test/*.test.mjs"
+    "test": "node --test \"test/unit/back/**/*.test.mjs\""
   },
   "dependencies": {
     "@teqfw/di": "^1.2.0",

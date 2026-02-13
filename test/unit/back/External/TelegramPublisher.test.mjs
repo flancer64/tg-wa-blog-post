@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createTestContainer } from './di-node.mjs';
+import { createTestContainer } from '../../unit-bootstrap.mjs';
 
 test('TelegramPublisher: retry = 3', async () => {
   const container = await createTestContainer();

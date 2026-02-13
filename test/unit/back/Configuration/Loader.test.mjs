@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createTestContainer } from './di-node.mjs';
+import { createTestContainer } from '../../unit-bootstrap.mjs';
 
 test('ConfigurationLoader reads .env and builds structure', async () => {
   const container = await createTestContainer();

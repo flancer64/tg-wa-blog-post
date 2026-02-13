@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createTestContainer } from './di-node.mjs';
+import { createTestContainer } from '../unit-bootstrap.mjs';
 
 const cfg = {
   telegram: { chatId: { en: 'en-chat', es: 'es-chat' } },

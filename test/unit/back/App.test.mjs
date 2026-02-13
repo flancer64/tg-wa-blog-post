@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createTestContainer } from './di-node.mjs';
+import { createTestContainer } from '../unit-bootstrap.mjs';
 
 test('Ttp_Back_App resolves via DI container', async () => {
   const container = await createTestContainer();
