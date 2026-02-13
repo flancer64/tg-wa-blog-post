@@ -6,6 +6,7 @@ export default class Ttp_Back_RunCycle {
     Ttp_Back_External_TelegramReader$: telegramReader,
     Ttp_Back_External_TelegramPublisher$: telegramPublisher,
     Ttp_Back_External_LlmTranslator$: llmTranslator,
+    Ttp_Back_Prompt_Provider$: promptProvider,
     Ttp_Back_Logger$: logger,
   }) {
     const extractLlmText = (resp) => {
@@ -13,8 +14,6 @@ export default class Ttp_Back_RunCycle {
       const candidate = resp?.output?.[0]?.content?.[0]?.text;
       return typeof candidate === 'string' ? candidate : '';
     };
-
-    const promptFor = (lang) => (lang === 'en' ? 'Translate to English with cultural adaptation.' : 'Translate to Spanish with cultural adaptation.');
 
     this.execute = async ({ projectRoot } = {}) => {
       const config = configManager.get();
@@ -31,10 +30,11 @@ export default class Ttp_Back_RunCycle {
 
       const runBranch = async (lang, chatId) => {
         try {
+          const prompt = await promptProvider.getTranslatePrompt({ lang, projectRoot });
           const llmResponse = await llmTranslator.translate({
             text: ru.text || '',
             targetLang: lang,
-            prompt: promptFor(lang),
+            prompt,
             projectRoot,
           });
           const translated = extractLlmText(llmResponse);

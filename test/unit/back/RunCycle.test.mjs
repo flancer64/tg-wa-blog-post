@@ -11,8 +11,16 @@ test('RunCycle: success scenario', async () => {
   let saved;
   let existsOpts;
   let saveOpts;
+  const prompts = [];
+  const translateCalls = [];
   container.register('Ttp_Back_Configuration_Manager$', { get: () => cfg });
   container.register('Ttp_Back_Logger$', { info() {}, exception() {} });
+  container.register('Ttp_Back_Prompt_Provider$', {
+    async getTranslatePrompt({ lang, projectRoot }) {
+      prompts.push({ lang, projectRoot });
+      return `prompt-${lang}`;
+    },
+  });
   container.register('Ttp_Back_External_TelegramReader$', {
     async getLatestRuMessage() {
       return { message_id: '42', text: 'Привет', date: '2026-01-01T00:00:00.000Z' };
@@ -23,7 +31,10 @@ test('RunCycle: success scenario', async () => {
     async saveAggregate(agg, opts) { saved = agg; saveOpts = opts; },
   });
   container.register('Ttp_Back_External_LlmTranslator$', {
-    async translate({ targetLang }) { return { output_text: `tx-${targetLang}` }; },
+    async translate({ targetLang, prompt }) {
+      translateCalls.push({ targetLang, prompt });
+      return { output_text: `tx-${targetLang}` };
+    },
   });
   container.register('Ttp_Back_External_TelegramPublisher$', {
     async publish({ chatId }) { return { result: { message_id: `${chatId}-id`, date: 1735689600 } }; },
@@ -36,6 +47,14 @@ test('RunCycle: success scenario', async () => {
   assert.equal(saved.status, 'success');
   assert.deepEqual(existsOpts, { projectRoot: '/project-root' });
   assert.deepEqual(saveOpts, { projectRoot: '/project-root' });
+  assert.deepEqual(prompts, [
+    { lang: 'en', projectRoot: '/project-root' },
+    { lang: 'es', projectRoot: '/project-root' },
+  ]);
+  assert.deepEqual(translateCalls, [
+    { targetLang: 'en', prompt: 'prompt-en' },
+    { targetLang: 'es', prompt: 'prompt-es' },
+  ]);
 });
 
 test('RunCycle: failure in one branch', async () => {
@@ -43,6 +62,9 @@ test('RunCycle: failure in one branch', async () => {
   let saved;
   container.register('Ttp_Back_Configuration_Manager$', { get: () => cfg });
   container.register('Ttp_Back_Logger$', { info() {}, exception() {} });
+  container.register('Ttp_Back_Prompt_Provider$', {
+    async getTranslatePrompt({ lang }) { return `prompt-${lang}`; },
+  });
   container.register('Ttp_Back_External_TelegramReader$', {
     async getLatestRuMessage() { return { message_id: '43', text: 'Привет', date: '2026-01-01T00:00:00.000Z' }; },
   });
@@ -71,6 +93,9 @@ test('RunCycle: no ru message', async () => {
   const container = await createTestContainer();
   container.register('Ttp_Back_Configuration_Manager$', { get: () => cfg });
   container.register('Ttp_Back_Logger$', { info() {}, exception() {} });
+  container.register('Ttp_Back_Prompt_Provider$', {
+    async getTranslatePrompt() { return ''; },
+  });
   container.register('Ttp_Back_External_TelegramReader$', {
     async getLatestRuMessage() { return null; },
   });
@@ -90,6 +115,9 @@ test('RunCycle: existing aggregate', async () => {
   const container = await createTestContainer();
   container.register('Ttp_Back_Configuration_Manager$', { get: () => cfg });
   container.register('Ttp_Back_Logger$', { info() {}, exception() {} });
+  container.register('Ttp_Back_Prompt_Provider$', {
+    async getTranslatePrompt() { return ''; },
+  });
   container.register('Ttp_Back_External_TelegramReader$', {
     async getLatestRuMessage() { return { message_id: '99', text: 'Привет', date: '2026-01-01T00:00:00.000Z' }; },
   });

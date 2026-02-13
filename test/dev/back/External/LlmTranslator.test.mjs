@@ -29,13 +29,16 @@ test('Dev LLM translator: translates RU text to EN with real API call', async (t
 
   /** @type {Ttp_Back_External_LlmTranslator} */
   const adapter = await container.get('Ttp_Back_External_LlmTranslator$');
+  /** @type {Ttp_Back_Prompt_Provider} */
+  const promptProvider = await container.get('Ttp_Back_Prompt_Provider$');
   const source = 'Привет! Сегодня солнечно и немного ветрено.';
   let response;
   try {
+    const prompt = await promptProvider.getTranslatePrompt({ lang: 'en', projectRoot });
     response = await adapter.translate({
       text: source,
       targetLang: 'en',
-      prompt: 'Translate to English. Return only translated text.',
+      prompt,
       projectRoot,
     });
   } catch (err) {
@@ -56,13 +59,16 @@ test('Dev LLM translator: translates RU text to ES with real API call', async (t
 
   /** @type {Ttp_Back_External_LlmTranslator} */
   const adapter = await container.get('Ttp_Back_External_LlmTranslator$');
+  /** @type {Ttp_Back_Prompt_Provider} */
+  const promptProvider = await container.get('Ttp_Back_Prompt_Provider$');
   const source = 'Сегодня мы тестируем переводчик для публикаций.';
   let response;
   try {
+    const prompt = await promptProvider.getTranslatePrompt({ lang: 'es', projectRoot });
     response = await adapter.translate({
       text: source,
       targetLang: 'es',
-      prompt: 'Translate to Spanish. Return only translated text.',
+      prompt,
       projectRoot,
     });
   } catch (err) {
