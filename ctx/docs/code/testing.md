@@ -35,7 +35,7 @@ container.get()
 
 В unit-тестах запрещён реальный доступ к:
 
-- `/var/data`;
+- `./var/data` (относительно `projectRoot`, переданного из bootstrap);
 - Telegram API;
 - LLM API.
 

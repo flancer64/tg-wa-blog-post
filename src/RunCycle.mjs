@@ -16,14 +16,14 @@ export default class Ttp_Back_RunCycle {
 
     const promptFor = (lang) => (lang === 'en' ? 'Translate to English with cultural adaptation.' : 'Translate to Spanish with cultural adaptation.');
 
-    this.execute = async () => {
+    this.execute = async ({ projectRoot } = {}) => {
       const ru = await telegramReader.getLatestRuMessage();
       if (!ru) {
         logger?.info?.('Ttp_Back_RunCycle', 'No ru message found');
         return 0;
       }
 
-      if (await storage.existsByRuMessageId(String(ru.message_id))) {
+      if (await storage.existsByRuMessageId(String(ru.message_id), { projectRoot })) {
         logger?.info?.('Ttp_Back_RunCycle', `Aggregate already exists for ${ru.message_id}`);
         return 0;
       }
@@ -51,7 +51,7 @@ export default class Ttp_Back_RunCycle {
       ]);
 
       const aggregate = aggregateFactory.create({ ru, en, es });
-      await storage.saveAggregate(aggregate);
+      await storage.saveAggregate(aggregate, { projectRoot });
       return aggregate.status === 'success' ? 0 : 1;
     };
   }

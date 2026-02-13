@@ -4,18 +4,23 @@ export default class Ttp_Back_Storage_Repository {
     'node:path': path,
     Ttp_Back_Logger$: logger,
   }) {
-    const baseDir = '/var/data';
+    const resolveBaseDir = (projectRoot) => {
+      if (!projectRoot) throw new Error('projectRoot is required for storage path resolution');
+      return path.join(projectRoot, 'var', 'data');
+    };
 
-    this.existsByRuMessageId = async (ruMessageId) => {
+    this.existsByRuMessageId = async (ruMessageId, { projectRoot } = {}) => {
+      const baseDir = resolveBaseDir(projectRoot);
       if (!fs.existsSync(baseDir)) return false;
       const files = await fs.promises.readdir(baseDir);
       return files.some((name) => name.endsWith(`_${ruMessageId}.json`));
     };
 
-    this.saveAggregate = async (aggregate) => {
+    this.saveAggregate = async (aggregate, { projectRoot } = {}) => {
+      const baseDir = resolveBaseDir(projectRoot);
       await fs.promises.mkdir(baseDir, { recursive: true });
       const ruMessageId = aggregate.ru_message_id;
-      if (await this.existsByRuMessageId(ruMessageId)) {
+      if (await this.existsByRuMessageId(ruMessageId, { projectRoot })) {
         throw new Error(`Aggregate already exists for ru_message_id=${ruMessageId}`);
       }
 

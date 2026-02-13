@@ -4,7 +4,7 @@ import { createTestContainer } from './di-node.mjs';
 
 function createMemFs() {
   const files = new Map();
-  const dirs = new Set(['/var/data']);
+  const dirs = new Set(['/project/var/data']);
   return {
     existsSync(path) { return dirs.has(path); },
     promises: {
@@ -39,9 +39,9 @@ test('Storage: atomic write and JSON structure', async () => {
 
   const storage = await container.get('Ttp_Back_Storage_Repository$');
   const agg = { ru_message_id: '1', status: 'success', ru_original_text: 'x' };
-  const pathSaved = await storage.saveAggregate(agg);
+  const pathSaved = await storage.saveAggregate(agg, { projectRoot: '/project' });
 
-  assert.match(pathSaved, /\/var\/data\//);
+  assert.match(pathSaved, /\/project\/var\/data\//);
   const final = [...fs._files.keys()].find((f) => f.endsWith('_1.json'));
   assert.ok(final);
   const content = fs._files.get(final);
@@ -58,8 +58,8 @@ test('Storage: overwrite is forbidden', async () => {
 
   const storage = await container.get('Ttp_Back_Storage_Repository$');
   const agg = { ru_message_id: '2', status: 'success' };
-  await storage.saveAggregate(agg);
-  await assert.rejects(() => storage.saveAggregate(agg));
+  await storage.saveAggregate(agg, { projectRoot: '/project' });
+  await assert.rejects(() => storage.saveAggregate(agg, { projectRoot: '/project' }));
 });
 
 test('Storage: exists check by ru_message_id', async () => {
@@ -70,8 +70,8 @@ test('Storage: exists check by ru_message_id', async () => {
   container.register('Ttp_Back_Logger$', { info() {} });
 
   const storage = await container.get('Ttp_Back_Storage_Repository$');
-  await storage.saveAggregate({ ru_message_id: '3', status: 'success' });
+  await storage.saveAggregate({ ru_message_id: '3', status: 'success' }, { projectRoot: '/project' });
 
-  assert.equal(await storage.existsByRuMessageId('3'), true);
-  assert.equal(await storage.existsByRuMessageId('404'), false);
+  assert.equal(await storage.existsByRuMessageId('3', { projectRoot: '/project' }), true);
+  assert.equal(await storage.existsByRuMessageId('404', { projectRoot: '/project' }), false);
 });

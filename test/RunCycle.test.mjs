@@ -9,6 +9,8 @@ const cfg = {
 test('RunCycle: success scenario', async () => {
   const container = await createTestContainer();
   let saved;
+  let existsOpts;
+  let saveOpts;
   container.register('Ttp_Back_Configuration$', cfg);
   container.register('Ttp_Back_Logger$', { info() {}, exception() {} });
   container.register('Ttp_Back_External_TelegramReader$', {
@@ -17,8 +19,8 @@ test('RunCycle: success scenario', async () => {
     },
   });
   container.register('Ttp_Back_Storage_Repository$', {
-    async existsByRuMessageId() { return false; },
-    async saveAggregate(agg) { saved = agg; },
+    async existsByRuMessageId(_ruMessageId, opts) { existsOpts = opts; return false; },
+    async saveAggregate(agg, opts) { saved = agg; saveOpts = opts; },
   });
   container.register('Ttp_Back_External_LlmTranslator$', {
     async translate({ targetLang }) { return { output_text: `tx-${targetLang}` }; },
@@ -28,10 +30,12 @@ test('RunCycle: success scenario', async () => {
   });
 
   const runCycle = await container.get('Ttp_Back_RunCycle$');
-  const code = await runCycle.execute();
+  const code = await runCycle.execute({ projectRoot: '/project-root' });
 
   assert.equal(code, 0);
   assert.equal(saved.status, 'success');
+  assert.deepEqual(existsOpts, { projectRoot: '/project-root' });
+  assert.deepEqual(saveOpts, { projectRoot: '/project-root' });
 });
 
 test('RunCycle: failure in one branch', async () => {
@@ -57,7 +61,7 @@ test('RunCycle: failure in one branch', async () => {
   });
 
   const runCycle = await container.get('Ttp_Back_RunCycle$');
-  const code = await runCycle.execute();
+  const code = await runCycle.execute({ projectRoot: '/project-root' });
 
   assert.equal(code, 1);
   assert.equal(saved.status, 'failure');
@@ -78,7 +82,7 @@ test('RunCycle: no ru message', async () => {
   container.register('Ttp_Back_External_TelegramPublisher$', { async publish() { return {}; } });
 
   const runCycle = await container.get('Ttp_Back_RunCycle$');
-  const code = await runCycle.execute();
+  const code = await runCycle.execute({ projectRoot: '/project-root' });
   assert.equal(code, 0);
 });
 
@@ -97,6 +101,6 @@ test('RunCycle: existing aggregate', async () => {
   container.register('Ttp_Back_External_TelegramPublisher$', { async publish() { return {}; } });
 
   const runCycle = await container.get('Ttp_Back_RunCycle$');
-  const code = await runCycle.execute();
+  const code = await runCycle.execute({ projectRoot: '/project-root' });
   assert.equal(code, 0);
 });
