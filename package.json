@@ -4,8 +4,8 @@
   "description": "Web service for publishing blog posts to a Telegram channel via bot.",
   "type": "module",
   "scripts": {
-    "start": "node bin/app.mjs",
-    "test": "echo \"No tests yet\""
+    "start": "node ./bin/bootstrap.mjs",
+    "test": "node --test test/*.test.mjs"
   },
   "dependencies": {
     "@teqfw/di": "^1.2.0",
