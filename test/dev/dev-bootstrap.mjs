@@ -21,9 +21,9 @@ export async function createDevContainer(options = {}) {
   resolver.addNamespaceRoot('Ttp_Back_', path.join(projectRoot, 'src'), 'mjs');
   resolver.addNamespaceRoot('Teqfw_Di_', path.join(projectRoot, 'node_modules', '@teqfw', 'di', 'src'), 'js');
 
-  // Load real configuration 
-  /** @type {Ttp_Back_Configuration_Loader} */
-  const loader = await container.get('Ttp_Back_Configuration_Loader$');
-  await loader.load({ projectRoot });
+  // Load real configuration once per container lifecycle.
+  /** @type {Ttp_Back_Configuration_Manager} */
+  const manager = await container.get('Ttp_Back_Configuration_Manager$');
+  manager.load({ projectRoot });
   return container;
 }

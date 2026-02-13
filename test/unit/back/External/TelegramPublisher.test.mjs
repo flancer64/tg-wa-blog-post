@@ -5,7 +5,7 @@ import { createTestContainer } from '../../unit-bootstrap.mjs';
 test('TelegramPublisher: retry = 3', async () => {
   const container = await createTestContainer();
   let attempts = 0;
-  container.register('Ttp_Back_Configuration_Loader$', { load: () => ({ telegram: { token: 'tok' } }) });
+  container.register('Ttp_Back_Configuration_Manager$', { get: () => ({ telegram: { token: 'tok' } }) });
   container.register('Ttp_Back_Logger$', { info() {}, exception() {} });
   container.register('node:node-fetch', async () => {
     attempts += 1;
@@ -19,7 +19,7 @@ test('TelegramPublisher: retry = 3', async () => {
 
 test('TelegramPublisher: returns message_id', async () => {
   const container = await createTestContainer();
-  container.register('Ttp_Back_Configuration_Loader$', { load: () => ({ telegram: { token: 'tok' } }) });
+  container.register('Ttp_Back_Configuration_Manager$', { get: () => ({ telegram: { token: 'tok' } }) });
   container.register('Ttp_Back_Logger$', { info() {}, exception() {} });
   container.register('node:node-fetch', async () => ({
     ok: true,

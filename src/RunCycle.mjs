@@ -1,6 +1,6 @@
 export default class Ttp_Back_RunCycle {
   constructor({
-    Ttp_Back_Configuration_Loader$: configLoader,
+    Ttp_Back_Configuration_Manager$: configManager,
     Ttp_Back_Storage_Repository$: storage,
     Ttp_Back_Aggregate_Factory$: aggregateFactory,
     Ttp_Back_External_TelegramReader$: telegramReader,
@@ -17,7 +17,7 @@ export default class Ttp_Back_RunCycle {
     const promptFor = (lang) => (lang === 'en' ? 'Translate to English with cultural adaptation.' : 'Translate to Spanish with cultural adaptation.');
 
     this.execute = async ({ projectRoot } = {}) => {
-      const config = configLoader.load({ projectRoot });
+      const config = configManager.get();
       const ru = await telegramReader.getLatestRuMessage({ projectRoot });
       if (!ru) {
         logger?.info?.('Ttp_Back_RunCycle', 'No ru message found');

@@ -5,7 +5,7 @@ import { createTestContainer } from '../../unit-bootstrap.mjs';
 test('LLM adapter: retry = 3 then throws', async () => {
   const container = await createTestContainer();
   let attempts = 0;
-  container.register('Ttp_Back_Configuration_Loader$', { load: () => ({ llm: { apiKey: 'secret' } }) });
+  container.register('Ttp_Back_Configuration_Manager$', { get: () => ({ llm: { apiKey: 'secret' } }) });
   container.register('Ttp_Back_Logger$', { info() {}, exception() {}, debug() {} });
   container.register('node:node-fetch', async () => {
     attempts += 1;

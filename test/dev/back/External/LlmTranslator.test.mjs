@@ -22,8 +22,9 @@ const isNetworkUnavailable = (err) => {
 };
 
 test('Dev LLM translator: translates RU text to EN with real API call', async (t) => {
-  /** @type {Ttp_Back_Configuration} */
-  const config = await container.get('Ttp_Back_Configuration$');
+  /** @type {Ttp_Back_Configuration_Manager} */
+  const manager = await container.get('Ttp_Back_Configuration_Manager$');
+  const config = manager.get();
   if (!config?.llm?.apiKey) t.skip('Real configuration is missing or LLM API key is absent');
 
   /** @type {Ttp_Back_External_LlmTranslator} */
@@ -48,8 +49,9 @@ test('Dev LLM translator: translates RU text to EN with real API call', async (t
 });
 
 test('Dev LLM translator: translates RU text to ES with real API call', async (t) => {
-  /** @type {Ttp_Back_Configuration} */
-  const config = await container.get('Ttp_Back_Configuration$');
+  /** @type {Ttp_Back_Configuration_Manager} */
+  const manager = await container.get('Ttp_Back_Configuration_Manager$');
+  const config = manager.get();
   if (!config?.llm?.apiKey) t.skip('Real configuration is missing or LLM API key is absent');
 
   /** @type {Ttp_Back_External_LlmTranslator} */

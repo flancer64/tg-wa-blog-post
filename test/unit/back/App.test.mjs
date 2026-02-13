@@ -5,6 +5,9 @@ import { createTestContainer } from '../unit-bootstrap.mjs';
 test('Ttp_Back_App resolves via DI container', async () => {
   const container = await createTestContainer();
 
+  container.register('Ttp_Back_Configuration_Manager$', {
+    load() {},
+  });
   container.register('Ttp_Back_RunCycle$', {
     async execute() {
       return 0;

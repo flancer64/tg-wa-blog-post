@@ -4,7 +4,7 @@ import { createTestContainer } from '../../unit-bootstrap.mjs';
 
 test('TelegramReader resolves and maps message shape', async () => {
   const container = await createTestContainer();
-  container.register('Ttp_Back_Configuration_Loader$', { load: () => ({ telegram: { token: 'tok', chatId: { ru: '-1001' } } }) });
+  container.register('Ttp_Back_Configuration_Manager$', { get: () => ({ telegram: { token: 'tok', chatId: { ru: '-1001' } } }) });
   container.register('Ttp_Back_Logger$', { info() {}, exception() {} });
   container.register('node:node-fetch', async () => ({
     ok: true,

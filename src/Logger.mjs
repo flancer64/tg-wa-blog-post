@@ -5,11 +5,9 @@ export default class Ttp_Back_Logger {
   }) {
     const redact = (value) => {
       const raw = typeof value === 'string' ? value : util.inspect(value, { depth: null, breakLength: Infinity });
-      const secrets = [process?.env?.TELEGRAM_TOKEN, process?.env?.LLM_API_KEY].filter(Boolean);
-      const masked = secrets.reduce((acc, secret) => acc.split(secret).join('***'), raw);
-      return masked
+      return raw
         .replace(/(Bearer\s+)[^\s"']+/gi, '$1***')
-        .replace(/((?:api[_-]?key|token)\s*[:=]\s*)[^\s,;"']+/gi, '$1***');
+        .replace(/((?:api[_-]?key|token|key)\s*[:=\s]\s*)[^\s,;"']+/gi, '$1***');
     };
 
     const write = (level, context, message, details) => {
