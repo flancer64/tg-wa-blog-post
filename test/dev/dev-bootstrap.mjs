@@ -2,23 +2,8 @@ import Container from '@teqfw/di';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const mergeConfig = (base, override = {}) => ({
-  telegram: {
-    token: override?.telegram?.token ?? base.telegram.token,
-    chatId: {
-      ru: override?.telegram?.chatId?.ru ?? base.telegram.chatId.ru,
-      en: override?.telegram?.chatId?.en ?? base.telegram.chatId.en,
-      es: override?.telegram?.chatId?.es ?? base.telegram.chatId.es,
-    },
-  },
-  llm: {
-    apiKey: override?.llm?.apiKey ?? base.llm.apiKey,
-  },
-});
-
 /**
- * Create and configure DI container for backend dev tests.
- * Loads real configuration and allows partial dependency/config overrides.
+ * Create and configure DI container for backend dev tests. Load real configuration.
  *
  * @param {{override?: (container: TeqFw_Di_Container) => Promise<void>|void, configOverride?: Object}} [options]
  * @returns {Promise<TeqFw_Di_Container>}
@@ -39,5 +24,6 @@ export async function createDevContainer(options = {}) {
   // Load real configuration 
   /** @type {Ttp_Back_Configuration_Loader} */
   const loader = await container.get('Ttp_Back_Configuration_Loader$');
+  await loader.load({ projectRoot });
   return container;
 }

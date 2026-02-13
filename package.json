@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Web service for publishing blog posts to a Telegram channel via bot.",
   "type": "module",
+  "types": "types.d.ts",
   "scripts": {
     "start": "node ./bin/bootstrap.mjs",
     "test:unit": "node --test \"test/unit/back/**/*.test.mjs\""

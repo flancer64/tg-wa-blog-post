@@ -34,19 +34,19 @@ export default class Ttp_Back_Configuration_Loader {
         throw new Error(`Missing required env vars: ${missing.join(', ')}`);
       }
 
-      return {
-        telegram: {
+      return Object.freeze({
+        telegram: Object.freeze({
           token: required.TELEGRAM_TOKEN,
-          chatId: {
+          chatId: Object.freeze({
             ru: required.TELEGRAM_CHAT_ID_RU,
             en: required.TELEGRAM_CHAT_ID_EN,
             es: required.TELEGRAM_CHAT_ID_ES,
-          },
-        },
-        llm: {
+          }),
+        }),
+        llm: Object.freeze({
           apiKey: required.LLM_API_KEY,
-        },
-      };
+        }),
+      });
     };
   }
 }

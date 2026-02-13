@@ -6,6 +6,8 @@ import { createDevContainer } from '../../dev-bootstrap.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(__dirname, '../../../../');
+/** @type {TeqFw_Di_Container} */
+const container = await createDevContainer();
 
 const extractOutputText = (response) => {
   if (typeof response?.output_text === 'string') return response.output_text.trim();
@@ -19,31 +21,13 @@ const isNetworkUnavailable = (err) => {
   return code === 'EAI_AGAIN' || code === 'ENOTFOUND' || code === 'ECONNREFUSED';
 };
 
-const createTranslator = async () => {
-  const container = await createDevContainer({
-    override: (di) => {
-      di.register('Ttp_Back_Logger$', { info() {}, debug() {}, exception() {} });
-      di.register('node:node-fetch', globalThis.fetch);
-    },
-  });
-  return container.get('Ttp_Back_External_LlmTranslator$');
-};
-
-const loadConfig = async () => {
-  const container = await createDevContainer();
-  const loader = await container.get('Ttp_Back_Configuration_Loader$');
-  try {
-    return loader.load({ projectRoot });
-  } catch {
-    return null;
-  }
-};
-
 test('Dev LLM translator: translates RU text to EN with real API call', async (t) => {
-  const config = await loadConfig();
+  /** @type {Ttp_Back_Configuration} */
+  const config = await container.get('Ttp_Back_Configuration$');
   if (!config?.llm?.apiKey) t.skip('Real configuration is missing or LLM API key is absent');
 
-  const adapter = await createTranslator();
+  /** @type {Ttp_Back_External_LlmTranslator} */
+  const adapter = await container.get('Ttp_Back_External_LlmTranslator$');
   const source = 'Привет! Сегодня солнечно и немного ветрено.';
   let response;
   try {
@@ -64,10 +48,12 @@ test('Dev LLM translator: translates RU text to EN with real API call', async (t
 });
 
 test('Dev LLM translator: translates RU text to ES with real API call', async (t) => {
-  const config = await loadConfig();
+  /** @type {Ttp_Back_Configuration} */
+  const config = await container.get('Ttp_Back_Configuration$');
   if (!config?.llm?.apiKey) t.skip('Real configuration is missing or LLM API key is absent');
 
-  const adapter = await createTranslator();
+  /** @type {Ttp_Back_External_LlmTranslator} */
+  const adapter = await container.get('Ttp_Back_External_LlmTranslator$');
   const source = 'Сегодня мы тестируем переводчик для публикаций.';
   let response;
   try {

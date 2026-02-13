@@ -62,20 +62,14 @@ Dev-тесты могут быть недетерминированными и �
 ## Нормативный шаблон
 
 ```js
-/**
- * @description Test composition root for backend dev tests.
- */
-
 import Container from "@teqfw/di";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 /**
- * Create and configure a DI container for backend dev tests.
- * Allows real configuration loading and partial dependency overrides.
+ * Create and configure DI container for backend dev tests. Load real configuration.
  *
- * @param {Object} [options]
- * @param {Function} [options.override] Optional function(container) to override dependencies.
+ * @param {{override?: (container: TeqFw_Di_Container) => Promise<void>|void, configOverride?: Object}} [options]
  * @returns {Promise<TeqFw_Di_Container>}
  */
 export async function createDevContainer(options = {}) {
@@ -88,15 +82,13 @@ export async function createDevContainer(options = {}) {
 
   /** @type {TeqFw_Di_Container_Resolver} */
   const resolver = container.getResolver();
-
   resolver.addNamespaceRoot("Namespace_Back_", path.join(projectRoot, "src"), "mjs");
-
   resolver.addNamespaceRoot("Teqfw_Di_", path.join(projectRoot, "node_modules", "@teqfw", "di", "src"), "js");
 
-  if (typeof options.override === "function") {
-    await options.override(container);
-  }
-
+  // Load real configuration
+  /** @type {Namespace_Back_Configuration_Loader} */
+  const loader = await container.get("Namespace_Back_Configuration_Loader$");
+  await loader.load({ projectRoot });
   return container;
 }
 ```
