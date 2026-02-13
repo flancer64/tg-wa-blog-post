@@ -5,7 +5,7 @@ import { createTestContainer } from '../../unit-bootstrap.mjs';
 test('TelegramPublisher: retry = 3', async () => {
   const container = await createTestContainer();
   let attempts = 0;
-  container.register('Ttp_Back_Configuration$', { telegram: { token: 'tok' } });
+  container.register('Ttp_Back_Configuration_Loader$', { load: () => ({ telegram: { token: 'tok' } }) });
   container.register('Ttp_Back_Logger$', { info() {}, exception() {} });
   container.register('node:node-fetch', async () => {
     attempts += 1;
@@ -13,13 +13,13 @@ test('TelegramPublisher: retry = 3', async () => {
   });
 
   const adapter = await container.get('Ttp_Back_External_TelegramPublisher$');
-  await assert.rejects(() => adapter.publish({ chatId: '1', text: 'x' }));
+  await assert.rejects(() => adapter.publish({ chatId: '1', text: 'x', projectRoot: '/project' }));
   assert.equal(attempts, 3);
 });
 
 test('TelegramPublisher: returns message_id', async () => {
   const container = await createTestContainer();
-  container.register('Ttp_Back_Configuration$', { telegram: { token: 'tok' } });
+  container.register('Ttp_Back_Configuration_Loader$', { load: () => ({ telegram: { token: 'tok' } }) });
   container.register('Ttp_Back_Logger$', { info() {}, exception() {} });
   container.register('node:node-fetch', async () => ({
     ok: true,
@@ -29,6 +29,6 @@ test('TelegramPublisher: returns message_id', async () => {
   }));
 
   const adapter = await container.get('Ttp_Back_External_TelegramPublisher$');
-  const res = await adapter.publish({ chatId: '1', text: 'x' });
+  const res = await adapter.publish({ chatId: '1', text: 'x', projectRoot: '/project' });
   assert.equal(res.result.message_id, 777);
 });

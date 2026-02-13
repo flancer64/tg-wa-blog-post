@@ -1,6 +1,6 @@
 export default class Ttp_Back_RunCycle {
   constructor({
-    Ttp_Back_Configuration$: config,
+    Ttp_Back_Configuration_Loader$: configLoader,
     Ttp_Back_Storage_Repository$: storage,
     Ttp_Back_Aggregate_Factory$: aggregateFactory,
     Ttp_Back_External_TelegramReader$: telegramReader,
@@ -17,7 +17,8 @@ export default class Ttp_Back_RunCycle {
     const promptFor = (lang) => (lang === 'en' ? 'Translate to English with cultural adaptation.' : 'Translate to Spanish with cultural adaptation.');
 
     this.execute = async ({ projectRoot } = {}) => {
-      const ru = await telegramReader.getLatestRuMessage();
+      const config = configLoader.load({ projectRoot });
+      const ru = await telegramReader.getLatestRuMessage({ projectRoot });
       if (!ru) {
         logger?.info?.('Ttp_Back_RunCycle', 'No ru message found');
         return 0;
@@ -30,9 +31,14 @@ export default class Ttp_Back_RunCycle {
 
       const runBranch = async (lang, chatId) => {
         try {
-          const llmResponse = await llmTranslator.translate({ text: ru.text || '', targetLang: lang, prompt: promptFor(lang) });
+          const llmResponse = await llmTranslator.translate({
+            text: ru.text || '',
+            targetLang: lang,
+            prompt: promptFor(lang),
+            projectRoot,
+          });
           const translated = extractLlmText(llmResponse);
-          const tgResponse = await telegramPublisher.publish({ chatId, text: translated });
+          const tgResponse = await telegramPublisher.publish({ chatId, text: translated, projectRoot });
           return {
             ok: true,
             text: translated,

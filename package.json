@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "start": "node ./bin/bootstrap.mjs",
-    "test": "node --test \"test/unit/back/**/*.test.mjs\""
+    "test:unit": "node --test \"test/unit/back/**/*.test.mjs\""
   },
   "dependencies": {
     "@teqfw/di": "^1.2.0",
-    "grammy": "^1.20.4"
+    "grammy": "^1.20.4",
+    "node-fetch": "^2.7.0"
   }
 }

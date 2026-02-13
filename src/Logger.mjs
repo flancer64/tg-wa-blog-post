@@ -1,12 +1,11 @@
 export default class Ttp_Back_Logger {
   constructor({
-    Ttp_Back_Configuration$: config,
     'node:process': process,
     'node:util': util,
   }) {
     const redact = (value) => {
       const raw = typeof value === 'string' ? value : util.inspect(value, { depth: null, breakLength: Infinity });
-      const secrets = [config?.telegram?.token, config?.llm?.apiKey].filter(Boolean);
+      const secrets = [process?.env?.TELEGRAM_TOKEN, process?.env?.LLM_API_KEY].filter(Boolean);
       return secrets.reduce((acc, secret) => acc.split(secret).join('***'), raw);
     };
 

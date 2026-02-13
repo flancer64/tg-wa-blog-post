@@ -5,11 +5,10 @@ import { createTestContainer } from '../unit-bootstrap.mjs';
 test('Logger: masks TELEGRAM_TOKEN and LLM_API_KEY', async () => {
   const container = await createTestContainer();
   let output = '';
-  container.register('Ttp_Back_Configuration$', {
-    telegram: { token: 'tg-secret' },
-    llm: { apiKey: 'llm-secret' },
+  container.register('node:process', {
+    env: { TELEGRAM_TOKEN: 'tg-secret', LLM_API_KEY: 'llm-secret' },
+    stdout: { write: (line) => { output += line; } },
   });
-  container.register('node:process', { stdout: { write: (line) => { output += line; } } });
   container.register('node:util', {
     inspect: (v) => JSON.stringify(v),
   });

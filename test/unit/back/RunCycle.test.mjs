@@ -11,7 +11,7 @@ test('RunCycle: success scenario', async () => {
   let saved;
   let existsOpts;
   let saveOpts;
-  container.register('Ttp_Back_Configuration$', cfg);
+  container.register('Ttp_Back_Configuration_Loader$', { load: () => cfg });
   container.register('Ttp_Back_Logger$', { info() {}, exception() {} });
   container.register('Ttp_Back_External_TelegramReader$', {
     async getLatestRuMessage() {
@@ -41,7 +41,7 @@ test('RunCycle: success scenario', async () => {
 test('RunCycle: failure in one branch', async () => {
   const container = await createTestContainer();
   let saved;
-  container.register('Ttp_Back_Configuration$', cfg);
+  container.register('Ttp_Back_Configuration_Loader$', { load: () => cfg });
   container.register('Ttp_Back_Logger$', { info() {}, exception() {} });
   container.register('Ttp_Back_External_TelegramReader$', {
     async getLatestRuMessage() { return { message_id: '43', text: 'Привет', date: '2026-01-01T00:00:00.000Z' }; },
@@ -69,7 +69,7 @@ test('RunCycle: failure in one branch', async () => {
 
 test('RunCycle: no ru message', async () => {
   const container = await createTestContainer();
-  container.register('Ttp_Back_Configuration$', cfg);
+  container.register('Ttp_Back_Configuration_Loader$', { load: () => cfg });
   container.register('Ttp_Back_Logger$', { info() {}, exception() {} });
   container.register('Ttp_Back_External_TelegramReader$', {
     async getLatestRuMessage() { return null; },
@@ -88,7 +88,7 @@ test('RunCycle: no ru message', async () => {
 
 test('RunCycle: existing aggregate', async () => {
   const container = await createTestContainer();
-  container.register('Ttp_Back_Configuration$', cfg);
+  container.register('Ttp_Back_Configuration_Loader$', { load: () => cfg });
   container.register('Ttp_Back_Logger$', { info() {}, exception() {} });
   container.register('Ttp_Back_External_TelegramReader$', {
     async getLatestRuMessage() { return { message_id: '99', text: 'Привет', date: '2026-01-01T00:00:00.000Z' }; },

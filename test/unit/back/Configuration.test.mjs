@@ -2,32 +2,30 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createTestContainer } from '../unit-bootstrap.mjs';
 
-test('Configuration: missing env throws', async () => {
+test('Configuration: propagates loader errors', async () => {
   const container = await createTestContainer();
-  container.register('node:path', { resolve: () => '/project/.env' });
-  container.register('node:fs', { existsSync: () => false });
-  container.register('node:process', { cwd: () => '/project', env: {}, stdout: { write() {} } });
-  container.register('Ttp_Back_Logger$', { exception() {} });
+  container.register('Ttp_Back_Configuration_Loader$', {
+    load() {
+      throw new Error('loader failed');
+    },
+  });
 
   await assert.rejects(() => container.get('Ttp_Back_Configuration$'));
 });
 
 test('Configuration: immutable object', async () => {
   const container = await createTestContainer();
-  container.register('node:path', { resolve: () => '/project/.env' });
-  container.register('node:fs', { existsSync: () => false });
-  container.register('node:process', {
-    cwd: () => '/project',
-    env: {
-      TELEGRAM_TOKEN: 'tkn',
-      TELEGRAM_CHAT_ID_RU: 'ru',
-      TELEGRAM_CHAT_ID_EN: 'en',
-      TELEGRAM_CHAT_ID_ES: 'es',
-      LLM_API_KEY: 'llm',
+  container.register('Ttp_Back_Configuration_Loader$', {
+    load() {
+      return {
+        telegram: {
+          token: 'tkn',
+          chatId: { ru: 'ru', en: 'en', es: 'es' },
+        },
+        llm: { apiKey: 'llm' },
+      };
     },
-    stdout: { write() {} },
   });
-  container.register('Ttp_Back_Logger$', { exception() {} });
 
   const cfg = await container.get('Ttp_Back_Configuration$');
   assert.equal(Object.isFrozen(cfg), true);

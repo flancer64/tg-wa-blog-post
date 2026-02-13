@@ -4,8 +4,11 @@ export default class Ttp_Back_Configuration_Loader {
     'node:path': path,
     'node:process': process,
   }) {
-    this.load = () => {
-      const envPath = path.resolve(process.cwd(), '.env');
+    this.load = ({ projectRoot } = {}) => {
+      if (!projectRoot) {
+        throw new Error('Missing required runtime option: projectRoot');
+      }
+      const envPath = path.resolve(projectRoot, '.env');
       if (fs.existsSync(envPath)) {
         const content = fs.readFileSync(envPath, 'utf8');
         for (const line of content.split(/\r?\n/)) {

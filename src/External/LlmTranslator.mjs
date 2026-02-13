@@ -1,11 +1,12 @@
 export default class Ttp_Back_External_LlmTranslator {
   constructor({
-    Ttp_Back_Configuration$: config,
+    Ttp_Back_Configuration_Loader$: configLoader,
     Ttp_Back_Logger$: logger,
     'node:node-fetch': fetch,
   }) {
     const doFetch = fetch?.default || fetch;
-    this.translate = async ({ text, targetLang, prompt }) => {
+    this.translate = async ({ text, targetLang, prompt, projectRoot }) => {
+      const config = configLoader.load({ projectRoot });
       let lastErr;
       for (let attempt = 1; attempt <= 3; attempt += 1) {
         try {
