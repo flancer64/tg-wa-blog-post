@@ -7,7 +7,7 @@ test('LLM adapter: retry = 3 then throws', async () => {
   let attempts = 0;
   container.register('Ttp_Back_Configuration_Manager$', { get: () => ({ llm: { apiKey: 'secret' } }) });
   container.register('Ttp_Back_Logger$', { info() {}, exception() {}, debug() {} });
-  container.register('node:node-fetch', async () => {
+  container.register('Ttp_Back_External_Fetch$', async () => {
     attempts += 1;
     throw new Error('network');
   });

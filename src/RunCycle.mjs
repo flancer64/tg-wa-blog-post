@@ -1,13 +1,45 @@
+// @ts-check
+
+/**
+ * Replication run-cycle coordinator resolved by DI container.
+ */
+
+export const __deps__ = {
+  configManager: 'Ttp_Back_Configuration_Manager$',
+  storage: 'Ttp_Back_Storage_Repository$',
+  aggregateFactory: 'Ttp_Back_Aggregate_Factory$',
+  telegramReader: 'Ttp_Back_External_TelegramReader$',
+  telegramPublisher: 'Ttp_Back_External_TelegramPublisher$',
+  llmTranslator: 'Ttp_Back_External_LlmTranslator$',
+  promptProvider: 'Ttp_Back_Prompt_Provider$',
+  logger: 'Ttp_Back_Logger$',
+};
+
+/**
+ * @typedef {Object} Ttp_Back_RunCycle$Deps
+ * @property {Ttp_Back_Configuration_Manager} configManager
+ * @property {Ttp_Back_Storage_Repository} storage
+ * @property {Ttp_Back_Aggregate_Factory} aggregateFactory
+ * @property {Ttp_Back_External_TelegramReader} telegramReader
+ * @property {Ttp_Back_External_TelegramPublisher} telegramPublisher
+ * @property {Ttp_Back_External_LlmTranslator} llmTranslator
+ * @property {Ttp_Back_Prompt_Provider} promptProvider
+ * @property {Ttp_Back_Logger} logger
+ */
+
 export default class Ttp_Back_RunCycle {
+  /**
+   * @param {Ttp_Back_RunCycle$Deps} deps
+   */
   constructor({
-    Ttp_Back_Configuration_Manager$: configManager,
-    Ttp_Back_Storage_Repository$: storage,
-    Ttp_Back_Aggregate_Factory$: aggregateFactory,
-    Ttp_Back_External_TelegramReader$: telegramReader,
-    Ttp_Back_External_TelegramPublisher$: telegramPublisher,
-    Ttp_Back_External_LlmTranslator$: llmTranslator,
-    Ttp_Back_Prompt_Provider$: promptProvider,
-    Ttp_Back_Logger$: logger,
+    configManager,
+    storage,
+    aggregateFactory,
+    telegramReader,
+    telegramPublisher,
+    llmTranslator,
+    promptProvider,
+    logger,
   }) {
     const extractLlmText = (resp) => {
       if (typeof resp?.output_text === 'string') return resp.output_text;

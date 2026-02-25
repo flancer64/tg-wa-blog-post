@@ -3,6 +3,7 @@ declare global {
   type Ttp_Back_App = InstanceType<typeof import("./src/App.mjs").default>;
   type Ttp_Back_Configuration_Loader = InstanceType<typeof import("./src/Configuration/Loader.mjs").default>;
   type Ttp_Back_Configuration_Manager = InstanceType<typeof import("./src/Configuration/Manager.mjs").default>;
+  type Ttp_Back_External_Fetch = InstanceType<typeof import("./src/External/Fetch.mjs").default>;
   type Ttp_Back_External_LlmTranslator = InstanceType<typeof import("./src/External/LlmTranslator.mjs").default>;
   type Ttp_Back_External_TelegramPublisher = InstanceType<typeof import("./src/External/TelegramPublisher.mjs").default>;
   type Ttp_Back_External_TelegramReader = InstanceType<typeof import("./src/External/TelegramReader.mjs").default>;

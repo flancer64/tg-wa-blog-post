@@ -1,9 +1,27 @@
+// @ts-check
+
+/**
+ * Runtime configuration loader from environment and .env file.
+ */
+
+export const __deps__ = {
+  fs: 'node_fs',
+  path: 'node_path',
+  process: 'node_process',
+};
+
+/**
+ * @typedef {Object} Ttp_Back_Configuration_Loader$Deps
+ * @property {typeof import('node:fs')} fs
+ * @property {typeof import('node:path')} path
+ * @property {typeof import('node:process')} process
+ */
+
 export default class Ttp_Back_Configuration_Loader {
-  constructor({
-    'node:fs': fs,
-    'node:path': path,
-    'node:process': process,
-  }) {
+  /**
+   * @param {Ttp_Back_Configuration_Loader$Deps} deps
+   */
+  constructor({ fs, path, process }) {
     this.load = ({ projectRoot } = {}) => {
       if (!projectRoot) {
         throw new Error('Missing required runtime option: projectRoot');

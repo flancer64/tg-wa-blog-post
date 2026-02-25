@@ -1,9 +1,27 @@
+// @ts-check
+
+/**
+ * Telegram adapter for publishing translated messages.
+ */
+
+export const __deps__ = {
+  configManager: 'Ttp_Back_Configuration_Manager$',
+  logger: 'Ttp_Back_Logger$',
+  fetch: 'Ttp_Back_External_Fetch$',
+};
+
+/**
+ * @typedef {Object} Ttp_Back_External_TelegramPublisher$Deps
+ * @property {Ttp_Back_Configuration_Manager} configManager
+ * @property {Ttp_Back_Logger} logger
+ * @property {Ttp_Back_External_Fetch} fetch
+ */
+
 export default class Ttp_Back_External_TelegramPublisher {
-  constructor({
-    Ttp_Back_Configuration_Manager$: configManager,
-    Ttp_Back_Logger$: logger,
-    'node:node-fetch': fetch,
-  }) {
+  /**
+   * @param {Ttp_Back_External_TelegramPublisher$Deps} deps
+   */
+  constructor({ configManager, logger, fetch }) {
     const doFetch = fetch?.default || fetch;
     this.publish = async ({ chatId, text, projectRoot }) => {
       const config = configManager.get();

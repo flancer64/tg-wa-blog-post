@@ -1,5 +1,23 @@
+// @ts-check
+
+/**
+ * Configuration lifecycle manager with single-load contract.
+ */
+
+export const __deps__ = {
+  loader: 'Ttp_Back_Configuration_Loader$',
+};
+
+/**
+ * @typedef {Object} Ttp_Back_Configuration_Manager$Deps
+ * @property {Ttp_Back_Configuration_Loader} loader
+ */
+
 export default class Ttp_Back_Configuration_Manager {
-  constructor({ Ttp_Back_Configuration_Loader$: loader }) {
+  /**
+   * @param {Ttp_Back_Configuration_Manager$Deps} deps
+   */
+  constructor({ loader }) {
     let config;
     let isLoaded = false;
 

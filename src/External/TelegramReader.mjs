@@ -1,9 +1,27 @@
+// @ts-check
+
+/**
+ * Telegram adapter for reading the latest source-channel message.
+ */
+
+export const __deps__ = {
+  configManager: 'Ttp_Back_Configuration_Manager$',
+  logger: 'Ttp_Back_Logger$',
+  fetch: 'Ttp_Back_External_Fetch$',
+};
+
+/**
+ * @typedef {Object} Ttp_Back_External_TelegramReader$Deps
+ * @property {Ttp_Back_Configuration_Manager} configManager
+ * @property {Ttp_Back_Logger} logger
+ * @property {Ttp_Back_External_Fetch} fetch
+ */
+
 export default class Ttp_Back_External_TelegramReader {
-  constructor({
-    Ttp_Back_Configuration_Manager$: configManager,
-    Ttp_Back_Logger$: logger,
-    'node:node-fetch': fetch,
-  }) {
+  /**
+   * @param {Ttp_Back_External_TelegramReader$Deps} deps
+   */
+  constructor({ configManager, logger, fetch }) {
     const doFetch = fetch?.default || fetch;
     this.getLatestRuMessage = async ({ projectRoot } = {}) => {
       const config = configManager.get();

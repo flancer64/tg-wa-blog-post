@@ -12,9 +12,8 @@ const projectRoot = path.resolve(__dirname, '..');
 const container = new Container();
 // DO NOT use container.register here (tests only)
 
-const resolver = container.getResolver();
-resolver.addNamespaceRoot('Ttp_Back_', path.join(projectRoot, 'src'), 'mjs');
-resolver.addNamespaceRoot('Teqfw_Di_', path.join(projectRoot, 'node_modules', '@teqfw', 'di', 'src'));
+container.enableLogging();
+container.addNamespaceRoot('Ttp_Back_', path.join(projectRoot, 'src'), '.mjs'); 
 
 const cliArgs = processModule.argv.slice(2);
 

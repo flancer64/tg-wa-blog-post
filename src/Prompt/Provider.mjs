@@ -1,8 +1,25 @@
+// @ts-check
+
+/**
+ * Prompt provider with filesystem-backed overrides and defaults.
+ */
+
+export const __deps__ = {
+  fs: 'node_fs',
+  path: 'node_path',
+};
+
+/**
+ * @typedef {Object} Ttp_Back_Prompt_Provider$Deps
+ * @property {typeof import('node:fs')} fs
+ * @property {typeof import('node:path')} path
+ */
+
 export default class Ttp_Back_Prompt_Provider {
-  constructor({
-    'node:fs': fs,
-    'node:path': path,
-  }) {
+  /**
+   * @param {Ttp_Back_Prompt_Provider$Deps} deps
+   */
+  constructor({ fs, path }) {
     const DEFAULTS = Object.freeze({
       en: 'Translate to English with cultural adaptation.',
       es: 'Translate to Spanish with cultural adaptation.',

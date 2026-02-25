@@ -1,5 +1,20 @@
+// @ts-check
+
+/**
+ * Immutable aggregate builder for completed replication runs.
+ */
+
+export const __deps__ = {};
+
+/**
+ * @typedef {Object} Ttp_Back_Aggregate_Factory$Deps
+ */
+
 export default class Ttp_Back_Aggregate_Factory {
-  constructor() {
+  /**
+   * @param {Ttp_Back_Aggregate_Factory$Deps} deps
+   */
+  constructor({} = {}) {
     this.create = ({ ru, en, es }) => {
       const status = en?.ok && es?.ok ? 'success' : 'failure';
       const aggregate = {

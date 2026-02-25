@@ -4,8 +4,8 @@ import { createTestContainer } from '../../unit-bootstrap.mjs';
 
 test('ConfigurationLoader reads .env and builds structure', async () => {
   const container = await createTestContainer();
-  container.register('node:path', await import('node:path'));
-  container.register('node:fs', {
+  container.register('node_path', await import('node:path'));
+  container.register('node_fs', {
     existsSync: () => true,
     readFileSync: () => [
       'TELEGRAM_TOKEN=tkn',
@@ -15,7 +15,7 @@ test('ConfigurationLoader reads .env and builds structure', async () => {
       'LLM_API_KEY=llm',
     ].join('\n'),
   });
-  container.register('node:process', { env: {}, stdout: { write() {} } });
+  container.register('node_process', { env: {}, stdout: { write() {} } });
   container.register('Ttp_Back_Logger$', { exception() {} });
 
   const loader = await container.get('Ttp_Back_Configuration_Loader$');
@@ -26,7 +26,7 @@ test('ConfigurationLoader reads .env and builds structure', async () => {
 
 test('ConfigurationLoader throws without project root from runtime', async () => {
   const container = await createTestContainer();
-  container.register('node:process', { env: {}, stdout: { write() {} } });
+  container.register('node_process', { env: {}, stdout: { write() {} } });
 
   const loader = await container.get('Ttp_Back_Configuration_Loader$');
   assert.throws(() => loader.load(), /projectRoot/);

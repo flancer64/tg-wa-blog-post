@@ -10,8 +10,8 @@ function createPathMock() {
 
 test('PromptProvider: loads existing file correctly', async () => {
   const container = await createTestContainer();
-  container.register('node:path', createPathMock());
-  container.register('node:fs', {
+  container.register('node_path', createPathMock());
+  container.register('node_fs', {
     promises: {
       async readFile(filePath, encoding) {
         assert.equal(filePath, '/project/var/prompt/translate_en.md');
@@ -28,8 +28,8 @@ test('PromptProvider: loads existing file correctly', async () => {
 
 test('PromptProvider: returns fallback when file is missing', async () => {
   const container = await createTestContainer();
-  container.register('node:path', createPathMock());
-  container.register('node:fs', {
+  container.register('node_path', createPathMock());
+  container.register('node_fs', {
     promises: {
       async readFile() { throw new Error('ENOENT'); },
     },
@@ -42,8 +42,8 @@ test('PromptProvider: returns fallback when file is missing', async () => {
 
 test('PromptProvider: returns fallback when file is empty', async () => {
   const container = await createTestContainer();
-  container.register('node:path', createPathMock());
-  container.register('node:fs', {
+  container.register('node_path', createPathMock());
+  container.register('node_fs', {
     promises: {
       async readFile() { return ''; },
     },
@@ -56,8 +56,8 @@ test('PromptProvider: returns fallback when file is empty', async () => {
 
 test('PromptProvider: returns fallback on read error', async () => {
   const container = await createTestContainer();
-  container.register('node:path', createPathMock());
-  container.register('node:fs', {
+  container.register('node_path', createPathMock());
+  container.register('node_fs', {
     promises: {
       async readFile() { throw new Error('EACCES'); },
     },
@@ -71,8 +71,8 @@ test('PromptProvider: returns fallback on read error', async () => {
 test('PromptProvider: resolves path from provided projectRoot', async () => {
   const container = await createTestContainer();
   let actualPath = '';
-  container.register('node:path', createPathMock());
-  container.register('node:fs', {
+  container.register('node_path', createPathMock());
+  container.register('node_fs', {
     promises: {
       async readFile(filePath) {
         actualPath = filePath;

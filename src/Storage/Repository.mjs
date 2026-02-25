@@ -1,9 +1,27 @@
+// @ts-check
+
+/**
+ * Aggregate storage adapter with atomic write semantics.
+ */
+
+export const __deps__ = {
+  fs: 'node_fs',
+  path: 'node_path',
+  logger: 'Ttp_Back_Logger$',
+};
+
+/**
+ * @typedef {Object} Ttp_Back_Storage_Repository$Deps
+ * @property {typeof import('node:fs')} fs
+ * @property {typeof import('node:path')} path
+ * @property {Ttp_Back_Logger} logger
+ */
+
 export default class Ttp_Back_Storage_Repository {
-  constructor({
-    'node:fs': fs,
-    'node:path': path,
-    Ttp_Back_Logger$: logger,
-  }) {
+  /**
+   * @param {Ttp_Back_Storage_Repository$Deps} deps
+   */
+  constructor({ fs, path, logger }) {
     const resolveBaseDir = (projectRoot) => {
       if (!projectRoot) throw new Error('projectRoot is required for storage path resolution');
       return path.join(projectRoot, 'var', 'data');

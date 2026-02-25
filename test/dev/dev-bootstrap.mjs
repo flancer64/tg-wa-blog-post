@@ -16,10 +16,8 @@ export async function createDevContainer(options = {}) {
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
   const projectRoot = path.resolve(__dirname, '../..');
 
-  /** @type {TeqFw_Di_Container_Resolver} */
-  const resolver = container.getResolver();
-  resolver.addNamespaceRoot('Ttp_Back_', path.join(projectRoot, 'src'), 'mjs');
-  resolver.addNamespaceRoot('Teqfw_Di_', path.join(projectRoot, 'node_modules', '@teqfw', 'di', 'src'), 'js');
+  container.addNamespaceRoot('Ttp_Back_', path.join(projectRoot, 'src'), '.mjs');
+  container.addNamespaceRoot('Teqfw_Di_', path.join(projectRoot, 'node_modules', '@teqfw', 'di', 'src2'), '.mjs');
 
   // Load real configuration once per container lifecycle.
   /** @type {Ttp_Back_Configuration_Manager} */

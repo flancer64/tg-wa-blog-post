@@ -6,7 +6,7 @@ test('TelegramReader resolves and maps message shape', async () => {
   const container = await createTestContainer();
   container.register('Ttp_Back_Configuration_Manager$', { get: () => ({ telegram: { token: 'tok', chatId: { ru: '-1001' } } }) });
   container.register('Ttp_Back_Logger$', { info() {}, exception() {} });
-  container.register('node:node-fetch', async () => ({
+  container.register('Ttp_Back_External_Fetch$', async () => ({
     ok: true,
     async json() {
       return {

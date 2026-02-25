@@ -1,8 +1,25 @@
+// @ts-check
+
+/**
+ * Centralized logging service resolved by DI container.
+ */
+
+export const __deps__ = {
+  process: 'node_process',
+  util: 'node_util',
+};
+
+/**
+ * @typedef {Object} Ttp_Back_Logger$Deps
+ * @property {typeof import('node:process')} process
+ * @property {typeof import('node:util')} util
+ */
+
 export default class Ttp_Back_Logger {
-  constructor({
-    'node:process': process,
-    'node:util': util,
-  }) {
+  /**
+   * @param {Ttp_Back_Logger$Deps} deps
+   */
+  constructor({ process, util }) {
     const redact = (value) => {
       const raw = typeof value === 'string' ? value : util.inspect(value, { depth: null, breakLength: Infinity });
       return raw

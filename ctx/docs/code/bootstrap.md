@@ -35,7 +35,7 @@ Namespace-модель:
 
 ```txt
 Ttp_Back_  → src/
-Teqfw_Di_  → node_modules/@teqfw/di/src
+Teqfw_Di_  → node_modules/@teqfw/di/src2
 ```
 
 DI-контейнер не экспортируется и не доступен вне bootstrap.

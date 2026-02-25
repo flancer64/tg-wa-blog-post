@@ -1,9 +1,27 @@
+// @ts-check
+
+/**
+ * Application entrypoint orchestrator resolved by DI container.
+ */
+
+export const __deps__ = {
+  configManager: 'Ttp_Back_Configuration_Manager$',
+  runCycle: 'Ttp_Back_RunCycle$',
+  logger: 'Ttp_Back_Logger$',
+};
+
+/**
+ * @typedef {Object} Ttp_Back_App$Deps
+ * @property {Ttp_Back_Configuration_Manager} configManager
+ * @property {Ttp_Back_RunCycle} runCycle
+ * @property {Ttp_Back_Logger} logger
+ */
+
 export default class Ttp_Back_App {
-  constructor({
-    Ttp_Back_Configuration_Manager$: configManager,
-    Ttp_Back_RunCycle$: runCycle,
-    Ttp_Back_Logger$: logger,
-  }) {
+  /**
+   * @param {Ttp_Back_App$Deps} deps
+   */
+  constructor({ configManager, runCycle, logger }) {
     this.run = async function ({ projectRoot, cliArgs } = {}) {
       try {
         configManager.load({ projectRoot });
