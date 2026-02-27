@@ -9,8 +9,15 @@
     "test:unit": "node --test \"test/unit/back/**/*.test.mjs\""
   },
   "dependencies": {
-    "@teqfw/di": "github:teqfw/di",
-    "grammy": "^1.20.4",
-    "node-fetch": "^2.7.0"
+    "@teqfw/di": "github:teqfw/di"
+  },
+  "teqfw": {
+    "namespaces": [
+      {
+        "prefix": "Ttp_Back_",
+        "path": "./src",
+        "ext": ".mjs"
+      }
+    ]
   }
 }

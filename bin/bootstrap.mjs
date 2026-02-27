@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 
+import fs from 'node:fs/promises';
 import path from 'node:path';
 import processModule from 'node:process';
 import { fileURLToPath } from 'node:url';
-import Container from '@teqfw/di';
+import Container from '@teqfw/di/src/Container.mjs';
+import NamespaceRegistry from '@teqfw/di/src/Config/NamespaceRegistry.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,7 +15,12 @@ const container = new Container();
 // DO NOT use container.register here (tests only)
 
 container.enableLogging();
-container.addNamespaceRoot('Ttp_Back_', path.join(projectRoot, 'src'), '.mjs'); 
+
+const namespaceRegistry = new NamespaceRegistry({ fs, path, appRoot: projectRoot });
+const entries = await namespaceRegistry.build();
+for (const entry of entries) {
+  container.addNamespaceRoot(entry.prefix, entry.dirAbs, entry.ext);
+}
 
 const cliArgs = processModule.argv.slice(2);
 

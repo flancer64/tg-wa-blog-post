@@ -25,9 +25,10 @@ Path: `./ctx/docs/code/conventions.md`
 
 - Production-код размещается в `src/`.
 - Тесты размещаются в `test/`.
-- Namespace root определяется в composition root.
-- В production-графе используется один namespace root.
-- Namespace не расширяется динамически во время выполнения.
+- Namespace mapping объявляется в `package.json` (`teqfw.namespaces`).
+- В production-графе допускается один или несколько namespace roots.
+- Bootstrap не регистрирует namespace roots вручную и не содержит hardcoded mapping.
+- Namespace-конфигурация не расширяется динамически во время выполнения.
 
 ---
 
@@ -62,7 +63,7 @@ Path: `./ctx/docs/code/conventions.md`
 - `container.register` запрещён в production-коде.
 - Composition root отвечает только за:
   - создание контейнера;
-  - настройку namespace;
+  - сборку namespace registry через `TeqFw_Di_Config_NamespaceRegistry`;
   - получение entrypoint-компонента;
   - завершение процесса.
 

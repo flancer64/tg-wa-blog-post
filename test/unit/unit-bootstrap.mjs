@@ -1,7 +1,9 @@
 // @ts-check
 
+import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import NamespaceRegistry from '@teqfw/di/src/Config/NamespaceRegistry.mjs';
 
 const COMP_AS_IS = 'A';
 const COMP_FACTORY = 'F';
@@ -112,7 +114,6 @@ class UnitTestContainer {
         return `node:${depId.moduleName}`;
       }
       if (depId.platform === 'npm') {
-        if (depId.moduleName === 'node_Fetch') return 'node-fetch';
         return depId.moduleName;
       }
       const root = namespaceRoots.find((one) => depId.moduleName.startsWith(one.prefix));
@@ -210,8 +211,11 @@ export async function createTestContainer() {
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
   const projectRoot = path.resolve(__dirname, '../..');
 
-  container.addNamespaceRoot('Ttp_Back_', path.join(projectRoot, 'src'), '.mjs');
-  container.addNamespaceRoot('Teqfw_Di_', path.join(projectRoot, 'node_modules', '@teqfw', 'di', 'src2'), '.mjs');
+  const namespaceRegistry = new NamespaceRegistry({ fs, path, appRoot: projectRoot });
+  const entries = await namespaceRegistry.build();
+  for (const entry of entries) {
+    container.addNamespaceRoot(entry.prefix, entry.dirAbs, entry.ext);
+  }
 
   return container;
 }

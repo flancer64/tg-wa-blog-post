@@ -1,5 +1,7 @@
-import Container from '@teqfw/di';
+import fs from 'node:fs/promises';
 import path from 'node:path';
+import Container from '@teqfw/di/src/Container.mjs';
+import NamespaceRegistry from '@teqfw/di/src/Config/NamespaceRegistry.mjs';
 import { fileURLToPath } from 'node:url';
 
 /**
@@ -16,8 +18,11 @@ export async function createDevContainer(options = {}) {
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
   const projectRoot = path.resolve(__dirname, '../..');
 
-  container.addNamespaceRoot('Ttp_Back_', path.join(projectRoot, 'src'), '.mjs');
-  container.addNamespaceRoot('Teqfw_Di_', path.join(projectRoot, 'node_modules', '@teqfw', 'di', 'src2'), '.mjs');
+  const namespaceRegistry = new NamespaceRegistry({ fs, path, appRoot: projectRoot });
+  const entries = await namespaceRegistry.build();
+  for (const entry of entries) {
+    container.addNamespaceRoot(entry.prefix, entry.dirAbs, entry.ext);
+  }
 
   // Load real configuration once per container lifecycle.
   /** @type {Ttp_Back_Configuration_Manager} */

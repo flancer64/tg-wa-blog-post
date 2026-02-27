@@ -4,7 +4,7 @@ Path: `./ctx/docs/code/di.md`
 
 ## Назначение
 
-Документ фиксирует правила использования `@teqfw/di` в Telegram Translation Publisher. Уровень определяет допустимую модель связывания зависимостей, namespace-структуру и ограничения на использование контейнера.
+Документ фиксирует правила использования `@teqfw/di` в Telegram Translation Publisher. Уровень определяет допустимую модель связывания зависимостей, декларативную namespace-модель и ограничения на использование контейнера.
 
 ## Общая модель
 
@@ -23,7 +23,7 @@ Path: `./ctx/docs/code/di.md`
 Зависимости внедряются контейнером через конструктор класса.
 
 - Имена параметров конструктора должны соответствовать Dependency ID.
-- Контейнер резолвит зависимости на основе namespace-правил и ID-модели (`$`, `$$`, `node:`).
+- Контейнер резолвит зависимости на основе namespace registry и ID-модели (`$`, `$$`, `node:`).
 - Классы не взаимодействуют с контейнером напрямую.
 
 Запрещено:
@@ -33,17 +33,34 @@ Path: `./ctx/docs/code/di.md`
 - создавать зависимости вручную через `new` (если это не локальные value-объекты);
 - использовать container как service locator.
 
-## Namespace-модель
+## Namespace Declaration
 
-В проекте используется только один namespace root:
+- Namespace roots декларируются только в корневом `package.json` в секции `teqfw.namespaces`.
+- Корневой проект обязан явно объявлять собственные namespace mapping.
+- Обнаружение namespace выполняется автоматически при bootstrap.
+- Bootstrap не должен вручную регистрировать namespace roots.
 
-```txt
-Ttp_Back_
+Нормативный пример:
+
+```json
+{
+  "teqfw": {
+    "namespaces": [
+      {
+        "prefix": "Ttp_Back_",
+        "path": "./src"
+      }
+    ]
+  }
+}
 ```
 
-Другие namespace (Shared, Web и т.п.) не допускаются в рамках текущего продукта.
+Уточнения:
 
-Namespace фиксируется на уровне bootstrap и не расширяется динамически в исполняемом коде.
+- Проект может объявлять один или несколько namespace roots.
+- Namespace roots зависимостей обнаруживаются автоматически через `TeqFw_Di_Config_NamespaceRegistry`.
+- Повторяющиеся namespace prefixes приводят к fail-fast завершению на старте.
+- Namespace-конфигурация статична и декларативна; runtime-мутация namespace запрещена.
 
 ## Platform API
 
@@ -96,7 +113,7 @@ Dependency ID в конструкторах и `container.get(...)` должны
 
 Разрешены только:
 
-- project-компоненты, для которых существует исходный файл в `src/` и которые резолвятся через namespace root;
+- project-компоненты, для которых существует исходный файл и которые резолвятся через namespace registry;
 - platform/node_modules зависимости в формате `node:*`.
 
 Запрещено:
@@ -106,6 +123,13 @@ Dependency ID в конструкторах и `container.get(...)` должны
 - формировать скрытые runtime-зависимости через выдуманные DI-ID.
 
 Если runtime-данные (например, `projectRoot`) нужны компоненту, они передаются явно аргументами публичных методов runtime-цикла, а не через выдуманные DI-зависимости.
+
+## Ограничения для агента
+
+- Namespace mapping должно быть объявлено в `package.json`.
+- Агент не должен вводить hardcoded namespace registration в bootstrap или тестовых bootstrap.
+- Агент не должен обходить `TeqFw_Di_Config_NamespaceRegistry`.
+- Namespace roots должны быть обнаружимы из metadata без выполнения project-кода.
 
 ## Test Mode
 

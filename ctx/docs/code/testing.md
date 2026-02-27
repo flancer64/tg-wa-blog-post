@@ -175,7 +175,7 @@ Dev bootstrap:
 
 - создаёт DI-контейнер;
 - включает `enableTestMode()`;
-- настраивает namespace root;
+- создаёт `TeqFw_Di_Config_NamespaceRegistry` и собирает namespace registry через auto-discovery;
 - может использовать реальный `ConfigurationLoader`;
 - допускает ручную регистрацию или переопределение конфигурации;
 - допускает частичную подмену зависимостей через `container.register`.

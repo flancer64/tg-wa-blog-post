@@ -14,7 +14,7 @@ test/unit/unit-bootstrap.mjs
 
 `unit-bootstrap.mjs` является единственной точкой инициализации DI-контейнера в тестовой зоне и используется всеми unit-тестами.
 
-Helper не использует production bootstrap и не расширяет namespace-модель проекта.
+Helper не использует production bootstrap и не изменяет декларативную namespace-модель проекта.
 
 ## Инварианты
 
@@ -23,13 +23,13 @@ Helper не использует production bootstrap и не расширяет
 - создаёт новый экземпляр `@teqfw/di` Container;
 - включает `enableTestMode()`;
 - вычисляет `projectRoot` относительно собственного расположения;
-- настраивает namespace root:
-  - `Namespace_Back_ → src/`
-  - `Teqfw_Di_ → node_modules/@teqfw/di/src`
-
+- создаёт `TeqFw_Di_Config_NamespaceRegistry`;
+- строит namespace registry через metadata auto-discovery;
+- передаёт namespace registry в конфигурацию контейнера;
+- переводит контейнер в frozen-состояние до `container.get(...)`;
 - возвращает готовый контейнер;
 - не выполняет `container.register` по умолчанию;
-- не добавляет дополнительных namespace;
+- не выполняет ручную регистрацию namespace roots;
 - не содержит бизнес-логики.
 
 Каждый unit-тест создаёт собственный контейнер через данный bootstrap. Переиспользование контейнера между тестами не допускается.
@@ -42,6 +42,7 @@ Helper не использует production bootstrap и не расширяет
  */
 
 import Container from "@teqfw/di";
+import NamespaceRegistry from "@teqfw/di/src2/Config/NamespaceRegistry.js";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -57,12 +58,11 @@ export async function createTestContainer() {
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
   const projectRoot = path.resolve(__dirname, "../..");
 
-  /** @type {TeqFw_Di_Container_Resolver} */
-  const resolver = container.getResolver();
-
-  resolver.addNamespaceRoot("Namespace_Back_", path.join(projectRoot, "src"), "mjs");
-
-  resolver.addNamespaceRoot("Teqfw_Di_", path.join(projectRoot, "node_modules", "@teqfw", "di", "src"), "js");
+  /** @type {TeqFw_Di_Config_NamespaceRegistry} */
+  const namespaceRegistry = new NamespaceRegistry();
+  await namespaceRegistry.build({ projectRoot });
+  container.setNamespaceRegistry(namespaceRegistry);
+  container.freeze();
 
   return container;
 }
