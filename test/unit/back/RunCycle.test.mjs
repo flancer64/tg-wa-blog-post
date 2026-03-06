@@ -39,6 +39,8 @@ test('RunCycle: success scenario', async () => {
   container.register('Ttp_Back_External_TelegramPublisher$', {
     async publish({ chatId }) { return { result: { message_id: `${chatId}-id`, date: 1735689600 } }; },
   });
+  container.register('node_fs', { promises: { readFile: async () => { throw new Error('must not be called'); } } });
+  container.register('node_path', { resolve: (...parts) => parts.join('/') });
 
   const runCycle = await container.get('Ttp_Back_RunCycle$');
   const code = await runCycle.execute({ projectRoot: '/project-root' });
@@ -81,6 +83,8 @@ test('RunCycle: failure in one branch', async () => {
   container.register('Ttp_Back_External_TelegramPublisher$', {
     async publish() { return { result: { message_id: 'en-id', date: 1735689600 } }; },
   });
+  container.register('node_fs', { promises: { readFile: async () => { throw new Error('must not be called'); } } });
+  container.register('node_path', { resolve: (...parts) => parts.join('/') });
 
   const runCycle = await container.get('Ttp_Back_RunCycle$');
   const code = await runCycle.execute({ projectRoot: '/project-root' });
@@ -105,6 +109,8 @@ test('RunCycle: no ru message', async () => {
   });
   container.register('Ttp_Back_External_LlmTranslator$', { async translate() { return { output_text: '' }; } });
   container.register('Ttp_Back_External_TelegramPublisher$', { async publish() { return {}; } });
+  container.register('node_fs', { promises: { readFile: async () => { throw new Error('must not be called'); } } });
+  container.register('node_path', { resolve: (...parts) => parts.join('/') });
 
   const runCycle = await container.get('Ttp_Back_RunCycle$');
   const code = await runCycle.execute({ projectRoot: '/project-root' });
@@ -127,8 +133,58 @@ test('RunCycle: existing aggregate', async () => {
   });
   container.register('Ttp_Back_External_LlmTranslator$', { async translate() { return { output_text: '' }; } });
   container.register('Ttp_Back_External_TelegramPublisher$', { async publish() { return {}; } });
+  container.register('node_fs', { promises: { readFile: async () => { throw new Error('must not be called'); } } });
+  container.register('node_path', { resolve: (...parts) => parts.join('/') });
 
   const runCycle = await container.get('Ttp_Back_RunCycle$');
   const code = await runCycle.execute({ projectRoot: '/project-root' });
   assert.equal(code, 0);
+});
+
+test('RunCycle: manual source-file scenario', async () => {
+  const container = await createTestContainer();
+  let saved;
+  let readPath;
+  container.register('Ttp_Back_Configuration_Manager$', { get: () => cfg });
+  container.register('Ttp_Back_Logger$', { info() {}, exception() {} });
+  container.register('Ttp_Back_Prompt_Provider$', {
+    async getTranslatePrompt({ lang }) { return `prompt-${lang}`; },
+  });
+  container.register('Ttp_Back_External_TelegramReader$', {
+    async getLatestRuMessage() {
+      throw new Error('must not be called');
+    },
+  });
+  container.register('Ttp_Back_Storage_Repository$', {
+    async existsByRuMessageId() { return false; },
+    async saveAggregate(agg) { saved = agg; },
+  });
+  container.register('Ttp_Back_External_LlmTranslator$', {
+    async translate({ targetLang, text }) {
+      return { output_text: `${targetLang}:${text}` };
+    },
+  });
+  container.register('Ttp_Back_External_TelegramPublisher$', {
+    async publish({ chatId }) { return { result: { message_id: `${chatId}-id`, date: 1735689600 } }; },
+  });
+  container.register('node_fs', {
+    promises: {
+      async readFile(path) {
+        readPath = path;
+        return 'Ручной пост';
+      },
+    },
+  });
+  container.register('node_path', {
+    resolve: (...parts) => parts.join('/').replace(/\/+/g, '/'),
+  });
+
+  const runCycle = await container.get('Ttp_Back_RunCycle$');
+  const code = await runCycle.execute({ projectRoot: '/project-root', sourceFile: './var/manual/post.txt' });
+
+  assert.equal(code, 0);
+  assert.equal(readPath, '/project-root/./var/manual/post.txt');
+  assert.match(saved.ru_message_id, /^-\d{12}$/);
+  assert.equal(saved.ru_original_text, 'Ручной пост');
+  assert.equal(saved.status, 'success');
 });

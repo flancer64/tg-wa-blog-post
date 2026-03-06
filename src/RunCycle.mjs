@@ -12,6 +12,8 @@ export const __deps__ = {
   telegramPublisher: 'Ttp_Back_External_TelegramPublisher$',
   llmTranslator: 'Ttp_Back_External_LlmTranslator$',
   promptProvider: 'Ttp_Back_Prompt_Provider$',
+  fs: 'node_fs',
+  path: 'node_path',
   logger: 'Ttp_Back_Logger$',
 };
 
@@ -24,6 +26,8 @@ export const __deps__ = {
  * @property {Ttp_Back_External_TelegramPublisher} telegramPublisher
  * @property {Ttp_Back_External_LlmTranslator} llmTranslator
  * @property {Ttp_Back_Prompt_Provider} promptProvider
+ * @property {typeof import('node:fs')} fs
+ * @property {typeof import('node:path')} path
  * @property {Ttp_Back_Logger} logger
  */
 
@@ -39,6 +43,8 @@ export default class Ttp_Back_RunCycle {
     telegramPublisher,
     llmTranslator,
     promptProvider,
+    fs,
+    path,
     logger,
   }) {
     const extractLlmText = (resp) => {
@@ -47,12 +53,43 @@ export default class Ttp_Back_RunCycle {
       return typeof candidate === 'string' ? candidate : '';
     };
 
-    this.execute = async ({ projectRoot } = {}) => {
+    const formatManualRuMessageId = (date) => {
+      const parts = [
+        String(date.getFullYear()),
+        String(date.getMonth() + 1).padStart(2, '0'),
+        String(date.getDate()).padStart(2, '0'),
+        String(date.getHours()).padStart(2, '0'),
+        String(date.getMinutes()).padStart(2, '0'),
+      ];
+      return `-${parts.join('')}`;
+    };
+
+    const readRuFromSourceFile = async ({ sourceFile, projectRoot }) => {
+      const filePath = path.resolve(projectRoot, sourceFile);
+      const text = await fs.promises.readFile(filePath, 'utf8');
+      if (!text.trim()) {
+        throw new Error(`Source file is empty: ${sourceFile}`);
+      }
+      const now = new Date();
+      return {
+        message_id: formatManualRuMessageId(now),
+        text,
+        date: '',
+      };
+    };
+
+    this.execute = async ({ projectRoot, sourceFile } = {}) => {
       const config = configManager.get();
-      const ru = await telegramReader.getLatestRuMessage({ projectRoot });
+      const ru = sourceFile
+        ? await readRuFromSourceFile({ sourceFile, projectRoot })
+        : await telegramReader.getLatestRuMessage({ projectRoot });
       if (!ru) {
         logger?.info?.('Ttp_Back_RunCycle', 'No ru message found');
         return 0;
+      }
+
+      if (sourceFile) {
+        logger?.info?.('Ttp_Back_RunCycle', `Using source-file input: ${sourceFile}`);
       }
 
       if (await storage.existsByRuMessageId(String(ru.message_id), { projectRoot })) {
