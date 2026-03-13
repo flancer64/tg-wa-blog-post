@@ -1,24 +1,17 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createTestContainer } from '../unit-bootstrap.mjs';
+import Ttp_Back_App from '../../../src/App.mjs';
 
-test('Ttp_Back_App resolves via DI container', async () => {
-  const container = await createTestContainer();
-
-  container.register('Ttp_Back_Configuration_Manager$', {
-    load() {},
-  });
-  container.register('Ttp_Back_RunCycle$', {
-    async execute() {
-      return 0;
+test('Ttp_Back_App resolves via constructor injection', () => {
+  const app = new Ttp_Back_App({
+    configManager: { load() {} },
+    runCycle: {
+      async execute() {
+        return 0;
+      },
     },
+    logger: { exception() {} },
   });
-
-  container.register('Ttp_Back_Logger$', {
-    exception() {},
-  });
-
-  const app = await container.get('Ttp_Back_App$');
 
   assert.ok(app);
   assert.equal(typeof app.run, 'function');
@@ -26,22 +19,23 @@ test('Ttp_Back_App resolves via DI container', async () => {
 });
 
 test('Ttp_Back_App passes parsed --source-file to run-cycle', async () => {
-  const container = await createTestContainer();
   let runArgs;
   let loadedProjectRoot;
-
-  container.register('Ttp_Back_Configuration_Manager$', {
-    load({ projectRoot }) { loadedProjectRoot = projectRoot; },
-  });
-  container.register('Ttp_Back_RunCycle$', {
-    async execute(args) {
-      runArgs = args;
-      return 0;
+  const app = new Ttp_Back_App({
+    configManager: {
+      load({ projectRoot }) {
+        loadedProjectRoot = projectRoot;
+      },
     },
+    runCycle: {
+      async execute(args) {
+        runArgs = args;
+        return 0;
+      },
+    },
+    logger: { exception() {} },
   });
-  container.register('Ttp_Back_Logger$', { exception() {} });
 
-  const app = await container.get('Ttp_Back_App$');
   const code = await app.run({
     projectRoot: '/project-root',
     cliArgs: ['--source-file', './var/manual/post.txt'],
@@ -56,22 +50,21 @@ test('Ttp_Back_App passes parsed --source-file to run-cycle', async () => {
 });
 
 test('Ttp_Back_App returns failure for invalid --source-file usage', async () => {
-  const container = await createTestContainer();
   let exception;
-
-  container.register('Ttp_Back_Configuration_Manager$', {
-    load() {},
-  });
-  container.register('Ttp_Back_RunCycle$', {
-    async execute() {
-      throw new Error('must not be called');
+  const app = new Ttp_Back_App({
+    configManager: { load() {} },
+    runCycle: {
+      async execute() {
+        throw new Error('must not be called');
+      },
+    },
+    logger: {
+      exception(_scope, err) {
+        exception = err;
+      },
     },
   });
-  container.register('Ttp_Back_Logger$', {
-    exception(_scope, err) { exception = err; },
-  });
 
-  const app = await container.get('Ttp_Back_App$');
   const code = await app.run({
     projectRoot: '/project-root',
     cliArgs: ['--source-file'],

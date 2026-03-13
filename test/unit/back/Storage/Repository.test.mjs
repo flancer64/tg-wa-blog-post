@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createTestContainer } from '../../unit-bootstrap.mjs';
+import Ttp_Back_Storage_Repository from '../../../../src/Storage/Repository.mjs';
 
 function createMemFs() {
   const files = new Map();
@@ -30,14 +30,17 @@ function createMemFs() {
   };
 }
 
-test('Storage: atomic write and JSON structure', async () => {
-  const container = await createTestContainer();
-  const fs = createMemFs();
-  container.register('node:fs', fs);
-  container.register('node:path', { join: (...parts) => parts.join('/').replace(/\/+/g, '/') });
-  container.register('Ttp_Back_Logger$', { info() {} });
+function createStorage(fs) {
+  return new Ttp_Back_Storage_Repository({
+    fs,
+    path: { join: (...parts) => parts.join('/').replace(/\/+/g, '/') },
+    logger: { info() {} },
+  });
+}
 
-  const storage = await container.get('Ttp_Back_Storage_Repository$');
+test('Storage: atomic write and JSON structure', async () => {
+  const fs = createMemFs();
+  const storage = createStorage(fs);
   const agg = { ru_message_id: '1', status: 'success', ru_original_text: 'x' };
   const pathSaved = await storage.saveAggregate(agg, { projectRoot: '/project' });
 
@@ -50,26 +53,16 @@ test('Storage: atomic write and JSON structure', async () => {
 });
 
 test('Storage: overwrite is forbidden', async () => {
-  const container = await createTestContainer();
   const fs = createMemFs();
-  container.register('node:fs', fs);
-  container.register('node:path', { join: (...parts) => parts.join('/').replace(/\/+/g, '/') });
-  container.register('Ttp_Back_Logger$', { info() {} });
-
-  const storage = await container.get('Ttp_Back_Storage_Repository$');
+  const storage = createStorage(fs);
   const agg = { ru_message_id: '2', status: 'success' };
   await storage.saveAggregate(agg, { projectRoot: '/project' });
   await assert.rejects(() => storage.saveAggregate(agg, { projectRoot: '/project' }));
 });
 
 test('Storage: exists check by ru_message_id', async () => {
-  const container = await createTestContainer();
   const fs = createMemFs();
-  container.register('node:fs', fs);
-  container.register('node:path', { join: (...parts) => parts.join('/').replace(/\/+/g, '/') });
-  container.register('Ttp_Back_Logger$', { info() {} });
-
-  const storage = await container.get('Ttp_Back_Storage_Repository$');
+  const storage = createStorage(fs);
   await storage.saveAggregate({ ru_message_id: '3', status: 'success' }, { projectRoot: '/project' });
 
   assert.equal(await storage.existsByRuMessageId('3', { projectRoot: '/project' }), true);

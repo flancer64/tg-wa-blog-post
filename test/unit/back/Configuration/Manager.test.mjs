@@ -1,34 +1,34 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createTestContainer } from '../../unit-bootstrap.mjs';
+import Ttp_Back_Configuration_Manager from '../../../../src/Configuration/Manager.mjs';
 
-test('ConfigurationManager: propagates loader errors on load', async () => {
-  const container = await createTestContainer();
-  container.register('Ttp_Back_Configuration_Loader$', {
-    load() {
-      throw new Error('loader failed');
+test('ConfigurationManager: propagates loader errors on load', () => {
+  const manager = new Ttp_Back_Configuration_Manager({
+    loader: {
+      load() {
+        throw new Error('loader failed');
+      },
     },
   });
 
-  const manager = await container.get('Ttp_Back_Configuration_Manager$');
   assert.throws(() => manager.load({ projectRoot: '/project' }));
 });
 
-test('ConfigurationManager: load/get lifecycle and immutability', async () => {
-  const container = await createTestContainer();
-  container.register('Ttp_Back_Configuration_Loader$', {
-    load() {
-      return {
-        telegram: {
-          token: 'tkn',
-          chatId: { ru: 'ru', en: 'en', es: 'es' },
-        },
-        llm: { apiKey: 'llm' },
-      };
+test('ConfigurationManager: load/get lifecycle and immutability', () => {
+  const manager = new Ttp_Back_Configuration_Manager({
+    loader: {
+      load() {
+        return {
+          telegram: {
+            token: 'tkn',
+            chatId: { ru: 'ru', en: 'en', es: 'es' },
+          },
+          llm: { apiKey: 'llm' },
+        };
+      },
     },
   });
 
-  const manager = await container.get('Ttp_Back_Configuration_Manager$');
   assert.throws(() => manager.get(), /has not been loaded/);
   const cfg = manager.load({ projectRoot: '/project' });
   assert.throws(() => manager.load({ projectRoot: '/project' }), /already been loaded/);

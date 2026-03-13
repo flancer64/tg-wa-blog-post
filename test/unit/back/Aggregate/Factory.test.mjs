@@ -1,10 +1,9 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createTestContainer } from '../../unit-bootstrap.mjs';
+import Ttp_Back_Aggregate_Factory from '../../../../src/Aggregate/Factory.mjs';
 
-test('Aggregate: immutable object', async () => {
-  const container = await createTestContainer();
-  const factory = await container.get('Ttp_Back_Aggregate_Factory$');
+test('Aggregate: immutable object', () => {
+  const factory = new Ttp_Back_Aggregate_Factory();
   const agg = factory.create({
     ru: { message_id: 1, text: 'ru', date: '2026-01-01' },
     en: { ok: true, text: 'en', message_id: 11, published_at: '2026-01-01' },
@@ -13,18 +12,16 @@ test('Aggregate: immutable object', async () => {
   assert.equal(Object.isFrozen(agg), true);
 });
 
-test('Aggregate: binary status', async () => {
-  const container = await createTestContainer();
-  const factory = await container.get('Ttp_Back_Aggregate_Factory$');
+test('Aggregate: binary status', () => {
+  const factory = new Ttp_Back_Aggregate_Factory();
   const success = factory.create({ ru: { message_id: 1, text: '', date: '' }, en: { ok: true }, es: { ok: true } });
   const failure = factory.create({ ru: { message_id: 2, text: '', date: '' }, en: { ok: true }, es: { ok: false } });
   assert.equal(success.status, 'success');
   assert.equal(failure.status, 'failure');
 });
 
-test('Aggregate: required structure', async () => {
-  const container = await createTestContainer();
-  const factory = await container.get('Ttp_Back_Aggregate_Factory$');
+test('Aggregate: required structure', () => {
+  const factory = new Ttp_Back_Aggregate_Factory();
   const agg = factory.create({
     ru: { message_id: 1, text: 'ru', date: '2026-01-01' },
     en: { ok: false },
