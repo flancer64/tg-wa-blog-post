@@ -41,6 +41,11 @@ class UnitTestContainer {
     const modules = new Map();
     let testMode = false;
 
+    const normalizeCdc = (cdc) => {
+      if (typeof cdc !== 'string') return cdc;
+      return cdc.startsWith('node:') ? `node_${cdc.slice(5)}` : cdc;
+    };
+
     /**
      * @param {*} value
      * @returns {*}
@@ -59,13 +64,14 @@ class UnitTestContainer {
      * @returns {ParsedDepId}
      */
     const parseCdc = (cdc) => {
-      if (!/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(cdc)) {
+      const normalized = normalizeCdc(cdc);
+      if (!/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(normalized)) {
         throw new Error('CDC must satisfy AsciiCdcIdentifier.');
       }
 
       /** @type {'teq'|'node'|'npm'} */
       let platform = 'teq';
-      let source = cdc;
+      let source = normalized;
       if (source.startsWith('node_')) {
         platform = 'node';
         source = source.slice(5);
@@ -95,7 +101,7 @@ class UnitTestContainer {
       /** @type {'A'|'F'} */
       const composition = (exportName === null) ? COMP_AS_IS : COMP_FACTORY;
 
-      return { platform, moduleName, exportName, composition, life, origin: cdc };
+      return { platform, moduleName, exportName, composition, life, origin: normalized };
     };
 
     /**
@@ -142,7 +148,8 @@ class UnitTestContainer {
      * @returns {Promise<*>}
      */
     const getInternal = async (cdc) => {
-      if (mocks.has(cdc)) return freeze(mocks.get(cdc));
+      const mockKey = normalizeCdc(cdc);
+      if (mocks.has(mockKey)) return freeze(mocks.get(mockKey));
 
       const depId = parseCdc(cdc);
       if (depId.life === LIFE_SINGLETON) {
@@ -192,7 +199,7 @@ class UnitTestContainer {
 
     this.register = (cdc, value) => {
       if (!testMode) throw new Error('Container test mode is disabled.');
-      mocks.set(cdc, value);
+      mocks.set(normalizeCdc(cdc), value);
     };
 
     this.get = (cdc) => getInternal(cdc);

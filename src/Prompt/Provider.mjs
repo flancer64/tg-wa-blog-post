@@ -4,10 +4,10 @@
  * Prompt provider with filesystem-backed overrides and defaults.
  */
 
-export const __deps__ = {
-  fs: 'node_fs',
-  path: 'node_path',
-};
+export const __deps__ = Object.freeze({
+  fs: 'node:fs',
+  path: 'node:path',
+});
 
 /**
  * @typedef {Object} Ttp_Back_Prompt_Provider$Deps

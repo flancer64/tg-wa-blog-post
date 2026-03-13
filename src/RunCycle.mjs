@@ -4,7 +4,7 @@
  * Replication run-cycle coordinator resolved by DI container.
  */
 
-export const __deps__ = {
+export const __deps__ = Object.freeze({
   configManager: 'Ttp_Back_Configuration_Manager$',
   storage: 'Ttp_Back_Storage_Repository$',
   aggregateFactory: 'Ttp_Back_Aggregate_Factory$',
@@ -12,10 +12,10 @@ export const __deps__ = {
   telegramPublisher: 'Ttp_Back_External_TelegramPublisher$',
   llmTranslator: 'Ttp_Back_External_LlmTranslator$',
   promptProvider: 'Ttp_Back_Prompt_Provider$',
-  fs: 'node_fs',
-  path: 'node_path',
+  fs: 'node:fs',
+  path: 'node:path',
   logger: 'Ttp_Back_Logger$',
-};
+});
 
 /**
  * @typedef {Object} Ttp_Back_RunCycle$Deps

@@ -4,9 +4,9 @@
  * Configuration lifecycle manager with single-load contract.
  */
 
-export const __deps__ = {
+export const __deps__ = Object.freeze({
   loader: 'Ttp_Back_Configuration_Loader$',
-};
+});
 
 /**
  * @typedef {Object} Ttp_Back_Configuration_Manager$Deps

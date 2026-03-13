@@ -4,7 +4,7 @@
  * Immutable aggregate builder for completed replication runs.
  */
 
-export const __deps__ = {};
+export const __deps__ = Object.freeze({});
 
 /**
  * @typedef {Object} Ttp_Back_Aggregate_Factory$Deps

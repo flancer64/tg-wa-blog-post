@@ -4,11 +4,11 @@
  * Aggregate storage adapter with atomic write semantics.
  */
 
-export const __deps__ = {
-  fs: 'node_fs',
-  path: 'node_path',
+export const __deps__ = Object.freeze({
+  fs: 'node:fs',
+  path: 'node:path',
   logger: 'Ttp_Back_Logger$',
-};
+});
 
 /**
  * @typedef {Object} Ttp_Back_Storage_Repository$Deps

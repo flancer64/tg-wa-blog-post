@@ -33,8 +33,8 @@ function createMemFs() {
 test('Storage: atomic write and JSON structure', async () => {
   const container = await createTestContainer();
   const fs = createMemFs();
-  container.register('node_fs', fs);
-  container.register('node_path', { join: (...parts) => parts.join('/').replace(/\/+/g, '/') });
+  container.register('node:fs', fs);
+  container.register('node:path', { join: (...parts) => parts.join('/').replace(/\/+/g, '/') });
   container.register('Ttp_Back_Logger$', { info() {} });
 
   const storage = await container.get('Ttp_Back_Storage_Repository$');
@@ -52,8 +52,8 @@ test('Storage: atomic write and JSON structure', async () => {
 test('Storage: overwrite is forbidden', async () => {
   const container = await createTestContainer();
   const fs = createMemFs();
-  container.register('node_fs', fs);
-  container.register('node_path', { join: (...parts) => parts.join('/').replace(/\/+/g, '/') });
+  container.register('node:fs', fs);
+  container.register('node:path', { join: (...parts) => parts.join('/').replace(/\/+/g, '/') });
   container.register('Ttp_Back_Logger$', { info() {} });
 
   const storage = await container.get('Ttp_Back_Storage_Repository$');
@@ -65,8 +65,8 @@ test('Storage: overwrite is forbidden', async () => {
 test('Storage: exists check by ru_message_id', async () => {
   const container = await createTestContainer();
   const fs = createMemFs();
-  container.register('node_fs', fs);
-  container.register('node_path', { join: (...parts) => parts.join('/').replace(/\/+/g, '/') });
+  container.register('node:fs', fs);
+  container.register('node:path', { join: (...parts) => parts.join('/').replace(/\/+/g, '/') });
   container.register('Ttp_Back_Logger$', { info() {} });
 
   const storage = await container.get('Ttp_Back_Storage_Repository$');

@@ -4,11 +4,11 @@
  * Runtime configuration loader from environment and .env file.
  */
 
-export const __deps__ = {
-  fs: 'node_fs',
-  path: 'node_path',
-  process: 'node_process',
-};
+export const __deps__ = Object.freeze({
+  fs: 'node:fs',
+  path: 'node:path',
+  process: 'node:process',
+});
 
 /**
  * @typedef {Object} Ttp_Back_Configuration_Loader$Deps

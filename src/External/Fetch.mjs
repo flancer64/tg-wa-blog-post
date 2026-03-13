@@ -4,7 +4,7 @@
  * Fetch provider exposing runtime global `fetch` in DI-friendly shape.
  */
 
-export const __deps__ = {};
+export const __deps__ = Object.freeze({});
 
 /**
  * @typedef {Object} Ttp_Back_External_Fetch$Deps

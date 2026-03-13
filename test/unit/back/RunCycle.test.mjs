@@ -39,8 +39,8 @@ test('RunCycle: success scenario', async () => {
   container.register('Ttp_Back_External_TelegramPublisher$', {
     async publish({ chatId }) { return { result: { message_id: `${chatId}-id`, date: 1735689600 } }; },
   });
-  container.register('node_fs', { promises: { readFile: async () => { throw new Error('must not be called'); } } });
-  container.register('node_path', { resolve: (...parts) => parts.join('/') });
+  container.register('node:fs', { promises: { readFile: async () => { throw new Error('must not be called'); } } });
+  container.register('node:path', { resolve: (...parts) => parts.join('/') });
 
   const runCycle = await container.get('Ttp_Back_RunCycle$');
   const code = await runCycle.execute({ projectRoot: '/project-root' });
@@ -83,8 +83,8 @@ test('RunCycle: failure in one branch', async () => {
   container.register('Ttp_Back_External_TelegramPublisher$', {
     async publish() { return { result: { message_id: 'en-id', date: 1735689600 } }; },
   });
-  container.register('node_fs', { promises: { readFile: async () => { throw new Error('must not be called'); } } });
-  container.register('node_path', { resolve: (...parts) => parts.join('/') });
+  container.register('node:fs', { promises: { readFile: async () => { throw new Error('must not be called'); } } });
+  container.register('node:path', { resolve: (...parts) => parts.join('/') });
 
   const runCycle = await container.get('Ttp_Back_RunCycle$');
   const code = await runCycle.execute({ projectRoot: '/project-root' });
@@ -109,8 +109,8 @@ test('RunCycle: no ru message', async () => {
   });
   container.register('Ttp_Back_External_LlmTranslator$', { async translate() { return { output_text: '' }; } });
   container.register('Ttp_Back_External_TelegramPublisher$', { async publish() { return {}; } });
-  container.register('node_fs', { promises: { readFile: async () => { throw new Error('must not be called'); } } });
-  container.register('node_path', { resolve: (...parts) => parts.join('/') });
+  container.register('node:fs', { promises: { readFile: async () => { throw new Error('must not be called'); } } });
+  container.register('node:path', { resolve: (...parts) => parts.join('/') });
 
   const runCycle = await container.get('Ttp_Back_RunCycle$');
   const code = await runCycle.execute({ projectRoot: '/project-root' });
@@ -133,8 +133,8 @@ test('RunCycle: existing aggregate', async () => {
   });
   container.register('Ttp_Back_External_LlmTranslator$', { async translate() { return { output_text: '' }; } });
   container.register('Ttp_Back_External_TelegramPublisher$', { async publish() { return {}; } });
-  container.register('node_fs', { promises: { readFile: async () => { throw new Error('must not be called'); } } });
-  container.register('node_path', { resolve: (...parts) => parts.join('/') });
+  container.register('node:fs', { promises: { readFile: async () => { throw new Error('must not be called'); } } });
+  container.register('node:path', { resolve: (...parts) => parts.join('/') });
 
   const runCycle = await container.get('Ttp_Back_RunCycle$');
   const code = await runCycle.execute({ projectRoot: '/project-root' });
@@ -167,7 +167,7 @@ test('RunCycle: manual source-file scenario', async () => {
   container.register('Ttp_Back_External_TelegramPublisher$', {
     async publish({ chatId }) { return { result: { message_id: `${chatId}-id`, date: 1735689600 } }; },
   });
-  container.register('node_fs', {
+  container.register('node:fs', {
     promises: {
       async readFile(path) {
         readPath = path;
@@ -175,7 +175,7 @@ test('RunCycle: manual source-file scenario', async () => {
       },
     },
   });
-  container.register('node_path', {
+  container.register('node:path', {
     resolve: (...parts) => parts.join('/').replace(/\/+/g, '/'),
   });
 

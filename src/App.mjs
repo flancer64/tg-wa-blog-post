@@ -4,11 +4,11 @@
  * Application entrypoint orchestrator resolved by DI container.
  */
 
-export const __deps__ = {
+export const __deps__ = Object.freeze({
   configManager: 'Ttp_Back_Configuration_Manager$',
   runCycle: 'Ttp_Back_RunCycle$',
   logger: 'Ttp_Back_Logger$',
-};
+});
 
 /**
  * @typedef {Object} Ttp_Back_App$Deps

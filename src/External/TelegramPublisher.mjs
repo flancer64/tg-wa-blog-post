@@ -4,11 +4,11 @@
  * Telegram adapter for publishing translated messages.
  */
 
-export const __deps__ = {
+export const __deps__ = Object.freeze({
   configManager: 'Ttp_Back_Configuration_Manager$',
   logger: 'Ttp_Back_Logger$',
   fetch: 'Ttp_Back_External_Fetch$',
-};
+});
 
 /**
  * @typedef {Object} Ttp_Back_External_TelegramPublisher$Deps

@@ -4,10 +4,10 @@
  * Centralized logging service resolved by DI container.
  */
 
-export const __deps__ = {
-  process: 'node_process',
-  util: 'node_util',
-};
+export const __deps__ = Object.freeze({
+  process: 'node:process',
+  util: 'node:util',
+});
 
 /**
  * @typedef {Object} Ttp_Back_Logger$Deps
