@@ -13,4 +13,4 @@ tests:
 - npm test
 
 commit:
-pending
+22c802f2de0f9e914b06dd1f2b8a2d161f7e62a5
