@@ -5,17 +5,17 @@ import Ttp_Back_Aggregate_Factory from '../../../../src/Aggregate/Factory.mjs';
 test('Aggregate: immutable object', () => {
   const factory = new Ttp_Back_Aggregate_Factory();
   const agg = factory.create({
-    ru: { message_id: 1, text: 'ru', date: '2026-01-01' },
-    en: { ok: true, text: 'en', message_id: 11, published_at: '2026-01-01' },
-    es: { ok: true, text: 'es', message_id: 12, published_at: '2026-01-01' },
+    ru: { message_id: 1, type: 'text', text: 'ru', caption: '', media: null, date: '2026-01-01' },
+    en: { ok: true, text: 'en', caption: '', message_id: 11, published_at: '2026-01-01' },
+    es: { ok: true, text: 'es', caption: '', message_id: 12, published_at: '2026-01-01' },
   });
   assert.equal(Object.isFrozen(agg), true);
 });
 
 test('Aggregate: binary status', () => {
   const factory = new Ttp_Back_Aggregate_Factory();
-  const success = factory.create({ ru: { message_id: 1, text: '', date: '' }, en: { ok: true }, es: { ok: true } });
-  const failure = factory.create({ ru: { message_id: 2, text: '', date: '' }, en: { ok: true }, es: { ok: false } });
+  const success = factory.create({ ru: { message_id: 1, type: 'text', text: '', caption: '', media: null, date: '' }, en: { ok: true }, es: { ok: true } });
+  const failure = factory.create({ ru: { message_id: 2, type: 'text', text: '', caption: '', media: null, date: '' }, en: { ok: true }, es: { ok: false } });
   assert.equal(success.status, 'success');
   assert.equal(failure.status, 'failure');
 });
@@ -23,11 +23,11 @@ test('Aggregate: binary status', () => {
 test('Aggregate: required structure', () => {
   const factory = new Ttp_Back_Aggregate_Factory();
   const agg = factory.create({
-    ru: { message_id: 1, text: 'ru', date: '2026-01-01' },
+    ru: { message_id: 1, type: 'text', text: 'ru', caption: '', media: null, date: '2026-01-01' },
     en: { ok: false },
     es: { ok: false },
   });
-  for (const key of ['ru_message_id', 'ru_original_text', 'ru_published_at', 'en_text', 'en_message_id', 'en_published_at', 'es_text', 'es_message_id', 'es_published_at', 'status']) {
+  for (const key of ['ru_message_id', 'ru_message_type', 'ru_original_text', 'ru_original_caption', 'ru_media', 'ru_published_at', 'en_text', 'en_caption', 'en_message_id', 'en_published_at', 'es_text', 'es_caption', 'es_message_id', 'es_published_at', 'status']) {
     assert.ok(Object.hasOwn(agg, key));
   }
 });

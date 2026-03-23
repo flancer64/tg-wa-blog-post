@@ -1,16 +1,28 @@
 status: SUCCESS
 
 summary:
-Updated README.md to better describe the service, the main and manual run modes, and the available checks. Added an npm test alias so the repository's documented validation command works.
+Added media-aware Telegram message handling across docs, adapters, run-cycle, and tests. Text messages still use the translation pipeline; photo, video, and document messages bypass media transformation, while captions are translated and republished with the media payload.
 
 files_changed:
-- README.md
-- package.json
-- ctx/agent/report/in-progress.txt
-- ctx/agent/report/issue-comment.txt
+- `ctx/docs/architecture/domain-model.md`
+- `ctx/docs/architecture/external-interfaces.md`
+- `ctx/docs/architecture/overview.md`
+- `ctx/docs/code/aggregate.md`
+- `ctx/docs/code/external/telegram.md`
+- `ctx/docs/composition/run-cycle.md`
+- `ctx/docs/constraints/overview.md`
+- `ctx/docs/product/overview.md`
+- `src/Aggregate/Factory.mjs`
+- `src/External/TelegramPublisher.mjs`
+- `src/External/TelegramReader.mjs`
+- `src/RunCycle.mjs`
+- `test/unit/back/Aggregate/Factory.test.mjs`
+- `test/unit/back/External/TelegramPublisher.test.mjs`
+- `test/unit/back/External/TelegramReader.test.mjs`
+- `test/unit/back/RunCycle.test.mjs`
 
 tests:
-- npm test
+- `npm test` passed.
 
 commit:
-22c802f2de0f9e914b06dd1f2b8a2d161f7e62a5
+5f8a31a
