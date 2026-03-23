@@ -6,6 +6,7 @@
   "types": "types.d.ts",
   "scripts": {
     "start": "node ./bin/bootstrap.mjs",
+    "test": "npm run test:unit",
     "test:unit": "node --test \"test/unit/back/**/*.test.mjs\""
   },
   "dependencies": {
