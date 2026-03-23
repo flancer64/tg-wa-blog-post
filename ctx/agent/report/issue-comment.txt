@@ -25,4 +25,4 @@ tests:
 - `npm test` passed.
 
 commit:
-pending
+5f8a31a
