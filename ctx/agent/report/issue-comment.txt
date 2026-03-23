@@ -1,0 +1,16 @@
+status: SUCCESS
+
+summary:
+Updated README.md to better describe the service, the main and manual run modes, and the available checks. Added an npm test alias so the repository's documented validation command works.
+
+files_changed:
+- README.md
+- package.json
+- ctx/agent/report/in-progress.txt
+- ctx/agent/report/issue-comment.txt
+
+tests:
+- npm test
+
+commit:
+pending
