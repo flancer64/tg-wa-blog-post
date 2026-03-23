@@ -23,21 +23,21 @@ export default class Ttp_Back_External_TelegramPublisher {
    */
   constructor({ configManager, logger, fetch }) {
     const doFetch = fetch?.default || fetch;
-    this.publish = async ({ chatId, text, projectRoot }) => {
+    const sendJson = async ({ chatId, endpoint, body }) => {
       const config = configManager.get();
       let lastErr;
       for (let attempt = 1; attempt <= 3; attempt += 1) {
         try {
-          logger?.info?.('Ttp_Back_External_TelegramPublisher', `sendMessage attempt ${attempt} to ${chatId}`);
-          const url = `https://api.telegram.org/bot${config.telegram.token}/sendMessage`;
+          logger?.info?.('Ttp_Back_External_TelegramPublisher', `${endpoint} attempt ${attempt} to ${chatId}`);
+          const url = `https://api.telegram.org/bot${config.telegram.token}/${endpoint}`;
           const res = await doFetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: chatId, text }),
+            body: JSON.stringify({ chat_id: chatId, ...body }),
           });
           const json = await res.json();
           if (!res.ok || !json.ok) {
-            throw new Error(`Telegram sendMessage error: ${res.status} ${JSON.stringify(json)}`);
+            throw new Error(`Telegram ${endpoint} error: ${res.status} ${JSON.stringify(json)}`);
           }
           return json;
         } catch (err) {
@@ -46,6 +46,31 @@ export default class Ttp_Back_External_TelegramPublisher {
         }
       }
       throw lastErr;
+    };
+    this.publish = async ({ chatId, text, projectRoot }) => sendJson({ chatId, endpoint: 'sendMessage', body: { text } });
+    this.publishMessage = async ({ chatId, message, projectRoot }) => {
+      if (message?.type === 'photo') {
+        return sendJson({
+          chatId,
+          endpoint: 'sendPhoto',
+          body: { photo: message.media?.photo?.file_id, caption: message.caption || '' },
+        });
+      }
+      if (message?.type === 'video') {
+        return sendJson({
+          chatId,
+          endpoint: 'sendVideo',
+          body: { video: message.media?.video?.file_id, caption: message.caption || '' },
+        });
+      }
+      if (message?.type === 'document') {
+        return sendJson({
+          chatId,
+          endpoint: 'sendDocument',
+          body: { document: message.media?.document?.file_id, caption: message.caption || '' },
+        });
+      }
+      return sendJson({ chatId, endpoint: 'sendMessage', body: { text: message?.text || '' } });
     };
   }
 }

@@ -73,7 +73,10 @@ export default class Ttp_Back_RunCycle {
       const now = new Date();
       return {
         message_id: formatManualRuMessageId(now),
+        type: 'text',
         text,
+        caption: '',
+        media: null,
         date: '',
       };
     };
@@ -99,24 +102,52 @@ export default class Ttp_Back_RunCycle {
 
       const runBranch = async (lang, chatId) => {
         try {
-          const prompt = await promptProvider.getTranslatePrompt({ lang, projectRoot });
-          const llmResponse = await llmTranslator.translate({
-            text: ru.text || '',
-            targetLang: lang,
-            prompt,
+          if (ru.type === 'text') {
+            const prompt = await promptProvider.getTranslatePrompt({ lang, projectRoot });
+            const llmResponse = await llmTranslator.translate({
+              text: ru.text || '',
+              targetLang: lang,
+              prompt,
+              projectRoot,
+            });
+            const translated = extractLlmText(llmResponse);
+            const tgResponse = await telegramPublisher.publish({ chatId, text: translated, projectRoot });
+            return {
+              ok: true,
+              text: translated,
+              caption: '',
+              message_id: tgResponse?.result?.message_id || '',
+              published_at: tgResponse?.result?.date ? new Date(tgResponse.result.date * 1000).toISOString() : '',
+            };
+          }
+          const caption = ru.caption
+            ? extractLlmText(await llmTranslator.translate({
+              text: ru.caption || '',
+              targetLang: lang,
+              prompt: await promptProvider.getTranslatePrompt({ lang, projectRoot }),
+              projectRoot,
+            }))
+            : '';
+          const tgResponse = await telegramPublisher.publishMessage({
+            chatId,
+            message: {
+              type: ru.type,
+              text: '',
+              caption,
+              media: ru.media,
+            },
             projectRoot,
           });
-          const translated = extractLlmText(llmResponse);
-          const tgResponse = await telegramPublisher.publish({ chatId, text: translated, projectRoot });
           return {
             ok: true,
-            text: translated,
+            text: '',
+            caption,
             message_id: tgResponse?.result?.message_id || '',
             published_at: tgResponse?.result?.date ? new Date(tgResponse.result.date * 1000).toISOString() : '',
           };
         } catch (err) {
           logger?.exception?.('Ttp_Back_RunCycle', err);
-          return { ok: false, text: '', message_id: '', published_at: '' };
+          return { ok: false, text: '', caption: '', message_id: '', published_at: '' };
         }
       };
 

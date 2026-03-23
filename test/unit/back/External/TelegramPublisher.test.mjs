@@ -32,3 +32,29 @@ test('TelegramPublisher: returns message_id', async () => {
   const res = await adapter.publish({ chatId: '1', text: 'x', projectRoot: '/project' });
   assert.equal(res.result.message_id, 777);
 });
+
+test('TelegramPublisher: sends photo message', async () => {
+  let body;
+  const adapter = new Ttp_Back_External_TelegramPublisher({
+    configManager: { get: () => ({ telegram: { token: 'tok' } }) },
+    logger: { info() {}, exception() {} },
+    fetch: async (_url, opts) => {
+      body = JSON.parse(opts.body);
+      return {
+        ok: true,
+        async json() {
+          return { ok: true, result: { message_id: 778, date: 1735689600 } };
+        },
+      };
+    },
+  });
+
+  const res = await adapter.publishMessage({
+    chatId: '1',
+    message: { type: 'photo', caption: 'cap', media: { photo: { file_id: 'file-1' } } },
+    projectRoot: '/project',
+  });
+  assert.equal(res.result.message_id, 778);
+  assert.equal(body.photo, 'file-1');
+  assert.equal(body.caption, 'cap');
+});

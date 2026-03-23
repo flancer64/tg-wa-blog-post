@@ -21,12 +21,17 @@ Path: `./ctx/docs/architecture/domain-model.md`
 Агрегат включает следующие обязательные атрибуты:
 
 - `ru_message_id`
+- `ru_message_type`
 - `ru_original_text`
+- `ru_original_caption`
+- `ru_media`
 - `ru_published_at`
 - `en_text`
+- `en_caption`
 - `en_message_id`
 - `en_published_at`
 - `es_text`
+- `es_caption`
 - `es_message_id`
 - `es_published_at`
 - `status`

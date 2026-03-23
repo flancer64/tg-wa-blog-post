@@ -26,6 +26,47 @@ export default class Ttp_Back_External_TelegramReader {
     this.getLatestRuMessage = async ({ projectRoot } = {}) => {
       const config = configManager.get();
       let lastErr;
+      const normalizeMessage = (message) => {
+        const date = message.date ? new Date(message.date * 1000).toISOString() : '';
+        if (message.photo?.length) {
+          return {
+            message_id: message.message_id,
+            type: 'photo',
+            text: '',
+            caption: message.caption || '',
+            media: { photo: message.photo[message.photo.length - 1] },
+            date,
+          };
+        }
+        if (message.video) {
+          return {
+            message_id: message.message_id,
+            type: 'video',
+            text: '',
+            caption: message.caption || '',
+            media: { video: message.video },
+            date,
+          };
+        }
+        if (message.document) {
+          return {
+            message_id: message.message_id,
+            type: 'document',
+            text: '',
+            caption: message.caption || '',
+            media: { document: message.document },
+            date,
+          };
+        }
+        return {
+          message_id: message.message_id,
+          type: 'text',
+          text: message.text || '',
+          caption: '',
+          media: null,
+          date,
+        };
+      };
       for (let attempt = 1; attempt <= 3; attempt += 1) {
         try {
           logger?.info?.('Ttp_Back_External_TelegramReader', `getUpdates attempt ${attempt}`);
@@ -40,11 +81,7 @@ export default class Ttp_Back_External_TelegramReader {
             .filter((post) => post && String(post.chat?.id) === String(config.telegram.chatId.ru));
           if (!items.length) return null;
           const latest = items.sort((a, b) => (a.message_id > b.message_id ? -1 : 1))[0];
-          return {
-            message_id: latest.message_id,
-            text: latest.text || '',
-            date: latest.date ? new Date(latest.date * 1000).toISOString() : '',
-          };
+          return normalizeMessage(latest);
         } catch (err) {
           lastErr = err;
           logger?.exception?.('Ttp_Back_External_TelegramReader', err);
