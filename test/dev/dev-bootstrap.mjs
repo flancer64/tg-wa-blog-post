@@ -3,7 +3,6 @@ import path from 'node:path';
 import Container from '@teqfw/di';
 import NamespaceRegistry from '@teqfw/di/src/Config/NamespaceRegistry.mjs';
 import { fileURLToPath } from 'node:url';
-import NodeColonCompatParser from '../../lib/NodeColonCompatParser.mjs';
 
 /**
  * Create and configure DI container for backend dev tests. Load real configuration.
@@ -14,7 +13,6 @@ import NodeColonCompatParser from '../../lib/NodeColonCompatParser.mjs';
 export async function createDevContainer(options = {}) {
   /** @type {TeqFw_Di_Container} */
   const container = new Container();
-  container.setParser(new NodeColonCompatParser());
   container.enableTestMode();
 
   const __dirname = path.dirname(fileURLToPath(import.meta.url));

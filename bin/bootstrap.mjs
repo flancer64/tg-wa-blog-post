@@ -6,14 +6,12 @@ import processModule from 'node:process';
 import { fileURLToPath } from 'node:url';
 import Container from '@teqfw/di';
 import NamespaceRegistry from '@teqfw/di/src/Config/NamespaceRegistry.mjs';
-import NodeColonCompatParser from '../lib/NodeColonCompatParser.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, '..');
 
 const container = new Container();
-container.setParser(new NodeColonCompatParser());
 // DO NOT use container.register here (tests only)
 
 container.enableLogging();
