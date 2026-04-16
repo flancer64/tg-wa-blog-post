@@ -1,4 +1,5 @@
 /.env
+/.codex
 /.vscode/
 /**/output.md
 /node_modules/
